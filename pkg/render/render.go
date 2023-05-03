@@ -5,6 +5,7 @@ import (
 	"html/template"
 	"log"
 	"myApp/pkg/config"
+	"myApp/pkg/models"
 	"net/http"
 	"path/filepath"
 )
@@ -16,11 +17,11 @@ func GetConfig(a *config.AppConfig) {
 	app = a
 }
 
-func RenderTemplate(w http.ResponseWriter, file string) {
+func RenderTemplate(w http.ResponseWriter, file string, td *models.TemplateData) {
 	// Get the template cache from the App config
 	tc := app.TemplateCache
 
-	execErr := tc[file].Execute(w, nil)
+	execErr := tc[file].Execute(w, td)
 
 	if execErr != nil {
 		log.Println(execErr)

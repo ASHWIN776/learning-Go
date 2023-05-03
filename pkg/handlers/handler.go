@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"myApp/pkg/config"
+	"myApp/pkg/models"
 	"myApp/pkg/render"
 	"net/http"
 )
@@ -19,9 +20,15 @@ func GetRepo(a *config.AppConfig) *Repository {
 }
 
 func (rep *Repository) Home(w http.ResponseWriter, r *http.Request) {
-	render.RenderTemplate(w, "home.page.gohtml")
+
+	stringMap := make(map[string]string)
+	stringMap["text"] = "Hello, this is Ashwin Anil"
+
+	render.RenderTemplate(w, "home.page.gohtml", &models.TemplateData{
+		StringMap: stringMap,
+	})
 }
 
 func (rep *Repository) About(w http.ResponseWriter, r *http.Request) {
-	render.RenderTemplate(w, "about.page.gohtml")
+	render.RenderTemplate(w, "about.page.gohtml", &models.TemplateData{})
 }
