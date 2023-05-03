@@ -24,13 +24,15 @@ func main() {
 	render.GetConfig(&app)
 
 	// As Home and About are Methods of an instance of type Repository - So, we need the instance from render.go
-	Repo := handlers.GetRepo(&app)
+	handlers.AddRepo(&app)
 
-	http.HandleFunc("/", Repo.Home)
-	http.HandleFunc("/about", Repo.About)
+	srv := http.Server{
+		Addr:    portNumber,
+		Handler: routes(&app),
+	}
 
 	fmt.Printf("Serving on port %s\n", portNumber)
-	err = http.ListenAndServe(portNumber, nil)
+	err = srv.ListenAndServe()
 
 	if err != nil {
 		fmt.Println("Failed to start the server")

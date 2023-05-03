@@ -13,10 +13,8 @@ type Repository struct {
 
 var Repo Repository
 
-func GetRepo(a *config.AppConfig) *Repository {
+func AddRepo(a *config.AppConfig) {
 	Repo.app = a
-
-	return &Repo
 }
 
 func (rep *Repository) Home(w http.ResponseWriter, r *http.Request) {
