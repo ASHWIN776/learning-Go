@@ -7,19 +7,33 @@ import (
 	"myApp/pkg/handlers"
 	"myApp/pkg/render"
 	"net/http"
+	"time"
+
+	"github.com/alexedwards/scs/v2"
 )
 
 const portNumber = ":8000"
 
+var app config.AppConfig
+var session *scs.SessionManager
+
 func main() {
 
-	var app config.AppConfig
+	app.InProduction = false
+
 	tc, err := render.BuildTemplateCache()
 
 	if err != nil {
 		log.Fatal("cannot build Template Cache")
 	}
 
+	session = scs.New()
+	session.Lifetime = 24 * time.Hour
+	session.Cookie.Persist = true
+	session.Cookie.SameSite = http.SameSiteLaxMode
+	session.Cookie.Secure = app.InProduction
+
+	app.Session = session
 	app.TemplateCache = tc
 	render.GetConfig(&app)
 

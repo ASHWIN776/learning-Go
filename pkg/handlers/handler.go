@@ -19,6 +19,9 @@ func AddRepo(a *config.AppConfig) {
 
 func (rep *Repository) Home(w http.ResponseWriter, r *http.Request) {
 
+	remoteIp := r.RemoteAddr
+	rep.app.Session.Put(r.Context(), "remote_ip", remoteIp)
+
 	stringMap := make(map[string]string)
 	stringMap["text"] = "Hello, this is Ashwin Anil"
 
@@ -28,5 +31,11 @@ func (rep *Repository) Home(w http.ResponseWriter, r *http.Request) {
 }
 
 func (rep *Repository) About(w http.ResponseWriter, r *http.Request) {
-	render.RenderTemplate(w, "about.page.gohtml", &models.TemplateData{})
+
+	stringMap := make(map[string]string)
+	stringMap["remote_ip"] = rep.app.Session.GetString(r.Context(), "remote_ip")
+
+	render.RenderTemplate(w, "about.page.gohtml", &models.TemplateData{
+		StringMap: stringMap,
+	})
 }
