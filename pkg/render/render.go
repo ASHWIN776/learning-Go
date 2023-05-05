@@ -4,10 +4,11 @@ import (
 	"errors"
 	"html/template"
 	"log"
-	"myApp/pkg/config"
-	"myApp/pkg/models"
 	"net/http"
 	"path/filepath"
+
+	"github.com/ASHWIN776/learning-Go/pkg/config"
+	"github.com/ASHWIN776/learning-Go/pkg/models"
 )
 
 var app *config.AppConfig

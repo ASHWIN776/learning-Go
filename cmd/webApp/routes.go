@@ -1,9 +1,10 @@
 package main
 
 import (
-	"myApp/pkg/config"
-	"myApp/pkg/handlers"
 	"net/http"
+
+	"github.com/ASHWIN776/learning-Go/pkg/config"
+	"github.com/ASHWIN776/learning-Go/pkg/handlers"
 
 	"github.com/go-chi/chi/v5"
 )

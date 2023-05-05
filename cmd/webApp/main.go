@@ -3,11 +3,12 @@ package main
 import (
 	"fmt"
 	"log"
-	"myApp/pkg/config"
-	"myApp/pkg/handlers"
-	"myApp/pkg/render"
 	"net/http"
 	"time"
+
+	"github.com/ASHWIN776/learning-Go/pkg/config"
+	"github.com/ASHWIN776/learning-Go/pkg/handlers"
+	"github.com/ASHWIN776/learning-Go/pkg/render"
 
 	"github.com/alexedwards/scs/v2"
 )

@@ -1,10 +1,11 @@
 package handlers
 
 import (
-	"myApp/pkg/config"
-	"myApp/pkg/models"
-	"myApp/pkg/render"
 	"net/http"
+
+	"github.com/ASHWIN776/learning-Go/pkg/config"
+	"github.com/ASHWIN776/learning-Go/pkg/models"
+	"github.com/ASHWIN776/learning-Go/pkg/render"
 )
 
 type Repository struct {
