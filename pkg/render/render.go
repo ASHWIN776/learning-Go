@@ -5,6 +5,7 @@ import (
 	"html/template"
 	"log"
 	"myApp/pkg/config"
+	"myApp/pkg/models"
 	"net/http"
 	"path/filepath"
 )
@@ -16,11 +17,17 @@ func GetConfig(a *config.AppConfig) {
 	app = a
 }
 
-func RenderTemplate(w http.ResponseWriter, file string) {
-	// Get the template cache from the App config
-	tc := app.TemplateCache
+func RenderTemplate(w http.ResponseWriter, file string, td *models.TemplateData) {
+	var tc map[string]*template.Template
 
-	execErr := tc[file].Execute(w, nil)
+	if app.UseCache {
+		// Get the template cache from the App config
+		tc = app.TemplateCache
+	} else {
+		tc, _ = BuildTemplateCache()
+	}
+
+	execErr := tc[file].Execute(w, td)
 
 	if execErr != nil {
 		log.Println(execErr)
@@ -28,6 +35,7 @@ func RenderTemplate(w http.ResponseWriter, file string) {
 }
 
 func BuildTemplateCache() (map[string]*template.Template, error) {
+
 	tc := map[string]*template.Template{}
 
 	// Find out all the pages ending with page.gohtml in the templates directory
