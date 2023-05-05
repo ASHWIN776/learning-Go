@@ -1,6 +1,10 @@
 {{template "base" .}}
 
-{{define "content"}}
-<h1>This is the home page</h1>
-{{index .StringMap "text"}}
+    {{define "content"}}
+    <h1>This is the home page</h1>
+    <div class="container">
+        <img src="/static/images/city.jpg" alt="City">
+        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Earum quae, soluta ex exercitationem minima voluptatum necessitatibus harum expedita. Earum at tempore quam. Ipsa, adipisci velit nostrum architecto voluptate at reprehenderit.</p>
+    </div>
+    {{index .StringMap "text"}}
 {{end}}
