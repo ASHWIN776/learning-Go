@@ -18,6 +18,7 @@
         max-width: 100%;
         height: 100px;
       }
+
     </style>
   </head>
   <body>
@@ -89,6 +90,9 @@
           <div class="col-lg-2">
             <button type="button" id="errorModalButton" class="btn btn-outline-success">Show error modal</button>
           </div>
+          <div class="col-lg-2">
+            <button type="button" id="formModalButton" class="btn btn-outline-success">Show Form</button>
+          </div>
         </div>
     </div>
 
@@ -149,6 +153,7 @@
       const toastButton = document.querySelector("#toastButton")
       const successModalButton = document.querySelector("#successModalButton")
       const errorModalButton = document.querySelector("#errorModalButton")
+      const formModalButton = document.querySelector("#formModalButton")
 
       alertButton.addEventListener("click", () => {
         alert("success", "Thie is the alert message")
@@ -164,6 +169,22 @@
 
       errorModalButton.addEventListener("click", () => {
         attention.error({msg: "This is an error message", title: "Auth Error"})
+      })
+
+      formModalButton.addEventListener("click", () => {
+        const html = `
+          <form class="needs-validation" id="reservation-form" novalidate>
+            <div class="row w-90 mx-auto my-4" id="reservation-dates-modal">
+              <div class="col">
+                <input disabled id="startDate" placeholder="Arrival" class="form-control" required type="text" name="startDate">
+              </div>
+              <div class="col">
+                <input disabled id="endDate" placeholder="Departure" class="form-control" required type="text" name="endDate">  
+              </div>
+            </div>
+          </form> 
+      `
+        attention.custom({title: "Book Rooms", html})
       })
 
       function Prompt(){
@@ -211,10 +232,44 @@
           })
         }
 
+        async function custom({
+          title = "",
+          html = ""
+        }){
+          const { value: formValues } = await Swal.fire({
+            title,
+            html,
+            focusConfirm: false,
+            showCancelButton: true,
+            willOpen: () => {
+              const elem = document.getElementById('reservation-dates-modal');
+              const rangepicker = new DateRangePicker(elem, {
+                showOnFocus: true,
+                orientation: "auto top"
+              }); 
+            },
+            preConfirm: () => {
+              return [
+                document.getElementById('startDate').value,
+                document.getElementById('endDate').value
+              ]
+            },
+            didOpen: () => {
+              document.getElementById('startDate').removeAttribute("disabled"),
+              document.getElementById('endDate').removeAttribute("disabled")
+            }
+          })
+
+          if (formValues) {
+            Swal.fire(JSON.stringify(formValues))
+          }
+        }
+
         return {
           toast,
           error,
-          success
+          success,
+          custom
         }
       }
 
