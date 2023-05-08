@@ -1,0 +1,38 @@
+{{template "base" .}}
+
+<!-- For own css -->
+{{define "css"}}
+
+{{end}}
+
+{{define "content"}}
+<div class="container">
+    <div class="row mt-3">
+      <h1 class="text-center">Make Reservation</h1>
+      <form class="mt-4">
+        <div class="mb-3">
+          <label for="firstNameInput" class="form-label">First Name</label>
+          <input type="text" name="firstName" class="form-control" id="firstNameInput" aria-describedby="firstNameHelp">
+        </div>
+        <div class="mb-3">
+          <label for="lastNameInput" class="form-label">Last Name</label>
+          <input type="text" name="lastName" class="form-control" id="lastNameInput" aria-describedby="lastNameHelp">
+        </div>
+        <div class="mb-3">
+          <label for="emailInput" class="form-label">Email</label>
+          <input type="email" name="email" class="form-control" id="emailInput" aria-describedby="emailHelp">
+        </div>
+        <div class="mb-3">
+          <label for="phInput" class="form-label">Phone Number</label>
+          <input type="text" name="phoneNumber" class="form-control" id="phInput" aria-describedby="phInputHelp">
+        </div>
+        <button type="submit" class="btn btn-primary">Submit</button>
+      </form>
+    </div>
+</div>
+{{end}}
+
+<!-- for own js -->
+{{define "js"}}
+
+{{end}}

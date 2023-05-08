@@ -15,8 +15,13 @@ func routes(app *config.AppConfig) http.Handler {
 	mux.Use(WriteToConsole)
 	mux.Use(SessionLoad)
 
+	// Routes
 	mux.Get("/", http.HandlerFunc(handlers.Repo.Home))
 	mux.Get("/about", http.HandlerFunc(handlers.Repo.About))
+	mux.Get("/contact", http.HandlerFunc(handlers.Repo.Contact))
+	mux.Get("/generals-quarters", http.HandlerFunc(handlers.Repo.GeneralsQuarters))
+	mux.Get("/majors-suite", http.HandlerFunc(handlers.Repo.MajorsSuite))
+	mux.Get("/make-reservation", http.HandlerFunc(handlers.Repo.MakeReservation))
 
 	// Creates a fileserver by telling it where the static directory exists
 	fileServer := http.FileServer(http.Dir("./static/"))

@@ -1,10 +1,49 @@
 {{template "base" .}}
 
-    {{define "content"}}
-    <h1>This is the home page</h1>
-    <div class="container">
-        <img src="/static/images/city.jpg" alt="City">
-        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Earum quae, soluta ex exercitationem minima voluptatum necessitatibus harum expedita. Earum at tempore quam. Ipsa, adipisci velit nostrum architecto voluptate at reprehenderit.</p>
+<!-- For own css -->
+{{define "css"}}
+
+{{end}}
+
+{{define "content"}}
+<div id="carouselExample" class="carousel slide carousel-fade">
+    <div class="carousel-inner">
+    <div class="carousel-item active">
+        <img src="./static/images/woman-laptop.png" class="d-block w-100" alt="Woman with laptop">
     </div>
-    {{index .StringMap "text"}}
+    <div class="carousel-item">
+        <img src="./static/images/tray.png" class="d-block w-100" alt="Tray">
+    </div>
+    <div class="carousel-item">
+        <img src="./static/images/outside.png" class="d-block w-100" alt="Outside">
+    </div>
+    </div>
+    <button class="carousel-control-prev" type="button" data-bs-target="#carouselExample" data-bs-slide="prev">
+    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+    <span class="visually-hidden">Previous</span>
+    </button>
+    <button class="carousel-control-next" type="button" data-bs-target="#carouselExample" data-bs-slide="next">
+    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+    <span class="visually-hidden">Next</span>
+    </button>
+</div>
+
+<div class="container">
+    <div class="row mt-3">
+    <h1 class="text-center">Welcome to Motel X</h1>
+    <p>Lorem, ipsum dolor sit amet consectetur adipisicing elit. Temporibus placeat quo dolor impedit, itaque similique amet neque non beatae ipsam earum praesentium tempore aperiam. Odio autem atque aspernatur itaque accusantium.
+    Pariatur, exercitationem. Placeat ab nihil unde temporibus eligendi, in qui incidunt explicabo nostrum optio pariatur corporis vero est, molestias exercitationem, neque mollitia tenetur quos repellendus totam voluptatum ad maxime! Ipsum?
+    Ab non aut dolorum laboriosam eos quod mollitia culpa pariatur veniam optio, quam molestiae quo nesciunt iusto minima autem iste itaque blanditiis quae! Dicta, ipsam recusandae vero ipsa commodi perspiciatis!</p>
+    </div>
+    <div class="row">
+    <div class="text-center">
+        <button type="button" class="btn btn-success">Make Reservation Now</button>
+    </div>
+    </div>
+</div>
+{{end}}
+
+<!-- for own js -->
+{{define "js"}}
+
 {{end}}

@@ -1,0 +1,38 @@
+{{template "base" .}}
+
+<!-- For own css -->
+{{define "css"}}
+<style>
+    .half-room{
+        max-width: 50%;
+        }
+</style>
+{{end}}
+
+{{define "content"}}
+<div class="container">
+    <div class="row">
+        <div class="col">
+            <img src="./static/images/marjors-suite.png" class="half-room img-thumbnail mx-auto d-block" alt="Major's Suite">
+        </div>
+    </div>
+    <div class="row mt-3">
+      <h1 class="text-center">Major's Suite</h1>
+      <p>
+        Lorem ipsum, dolor sit amet consectetur adipisicing elit. Natus eaque ullam aut vero voluptate, nihil deleniti laboriosam placeat, qui repellat assumenda provident reiciendis, corrupti quia? Unde quod dolorem eligendi obcaecati?
+        Voluptatibus voluptate accusamus dignissimos voluptas tenetur facere qui similique dolorum nobis velit aspernatur officiis alias repudiandae, modi porro! Explicabo modi nisi ipsam minima totam cumque odio sequi laudantium dicta beatae?
+        Similique maxime quod quos tempore adipisci est totam placeat assumenda velit libero dolorum quaerat reiciendis eum consequatur in qui voluptatum nobis, provident reprehenderit illum nisi explicabo ad et. Voluptatibus, veniam.
+      </p>
+    </div>
+    <div class="row">
+        <div class="text-center">
+          <button type="button" class="btn btn-success">Check Availability</button>
+        </div>
+    </div>
+</div>
+{{end}}
+
+<!-- For own js -->
+{{define "js"}}
+
+{{end}}
