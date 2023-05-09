@@ -40,7 +40,7 @@
 
     checkAvailibilityBtn.addEventListener("click", () => {
         const html = `
-        <form class="needs-validation" id="reservation-form" novalidate>
+        <form class="needs-validation" id="search-availability-form" novalidate>
             <div class="row w-90 mx-auto my-4" id="reservation-dates-modal">
             <div class="col">
                 <input disabled id="startDate" placeholder="Arrival" class="form-control" required type="text" name="startDate">
@@ -51,7 +51,25 @@
             </div>
         </form> 
         `
-        attention.custom({title: "Search Availability", html})
+        // this callback is called whenever the form is submitted
+        const callback = async () => {
+            const form = document.querySelector("#search-availability-form")
+            const payload = new FormData(form)
+
+            payload.append("csrf_token", "{{.CSRFToken}}")
+
+            // Post req
+            const res = await fetch("/search-availability-json", {
+                method: "POST",
+                body: payload
+            })
+
+            console.log(res)
+            const data = await res.json()
+
+            console.log(data)
+        }
+        attention.custom({title: "Search Availability", html, callback})
     })
 </script>
 {{end}}
