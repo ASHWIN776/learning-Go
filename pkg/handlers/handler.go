@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"encoding/json"
 	"fmt"
 	"net/http"
 
@@ -91,4 +92,25 @@ func (rep *Repository) PostAvailability(w http.ResponseWriter, r *http.Request) 
 	endDate := r.Form.Get("endDate")
 
 	w.Write([]byte(fmt.Sprintf("Start date is %s and End date is %s", startDate, endDate)))
+}
+
+type JSONResponse struct {
+	Ok      bool   `json:"ok"`
+	Message string `json:"message"`
+}
+
+func (rep *Repository) AvailabilityJSON(w http.ResponseWriter, r *http.Request) {
+	res := JSONResponse{
+		Ok:      true,
+		Message: "Available!",
+	}
+
+	out, err := json.MarshalIndent(res, "", "    ")
+
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	w.Header().Set("Content-type", "application/json")
+	w.Write(out)
 }
