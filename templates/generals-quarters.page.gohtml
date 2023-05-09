@@ -69,7 +69,31 @@
 
             console.log(data)
         }
-        attention.custom({title: "Search Availability", html, callback})
+
+        // Sweetalert func
+        const willOpen = () => {
+            const elem = document.getElementById('reservation-dates-modal');
+            const rangepicker = new DateRangePicker(elem, {
+                showOnFocus: true,
+                orientation: "auto top"
+            }); 
+        }
+        
+        // Sweetalert func
+        const didOpen = () => {
+            document.getElementById('startDate').removeAttribute("disabled"),
+            document.getElementById('endDate').removeAttribute("disabled")
+        }
+        
+        // Sweetalert func
+        const preConfirm = () => {
+            return [
+                document.getElementById('startDate').value,
+                document.getElementById('endDate').value
+            ]
+        }
+
+        attention.custom({title: "Search Availability", html, callback, willOpen, didOpen, preConfirm})
     })
 </script>
 {{end}}

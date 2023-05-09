@@ -48,30 +48,19 @@ function Prompt(){
     async function custom({
         title = "",
         html = "",
-        callback = () => {}
+        callback = () => {},
+        willOpen = () => {},
+        didOpen = () => {},
+        preConfirm = () => {}
     }){
         const { value: formValues } = await Swal.fire({
             title,
             html,
             focusConfirm: false,
             showCancelButton: true,
-            willOpen: () => {
-                const elem = document.getElementById('reservation-dates-modal');
-                const rangepicker = new DateRangePicker(elem, {
-                    showOnFocus: true,
-                    orientation: "auto top"
-                }); 
-            },
-            preConfirm: () => {
-                return [
-                    document.getElementById('startDate').value,
-                    document.getElementById('endDate').value
-                ]
-            },
-            didOpen: () => {
-            document.getElementById('startDate').removeAttribute("disabled"),
-            document.getElementById('endDate').removeAttribute("disabled")
-            }
+            willOpen,
+            preConfirm,
+            didOpen
         })
 
         if (formValues) {
