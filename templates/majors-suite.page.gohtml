@@ -26,7 +26,7 @@
     </div>
     <div class="row">
         <div class="text-center">
-            <a class="btn btn-success" href="/search-availability">Check Availability</a>
+            <button type="button" id="checkAvailibilityBtn" class="btn btn-success">Check Availability</button>
         </div>
     </div>
 </div>
@@ -34,5 +34,23 @@
 
 <!-- For own js -->
 {{define "js"}}
+<script>
+    const checkAvailibilityBtn = document.querySelector("#checkAvailibilityBtn")
 
+    checkAvailibilityBtn.addEventListener("click", () => {
+        const html = `
+        <form class="needs-validation" id="reservation-form" novalidate>
+            <div class="row w-90 mx-auto my-4" id="reservation-dates-modal">
+            <div class="col">
+                <input disabled id="startDate" placeholder="Arrival" class="form-control" required type="text" name="startDate">
+            </div>
+            <div class="col">
+                <input disabled id="endDate" placeholder="Departure" class="form-control" required type="text" name="endDate">  
+            </div>
+            </div>
+        </form> 
+        `
+        attention.custom({title: "Search Availability", html})
+    })
+</script>
 {{end}}
