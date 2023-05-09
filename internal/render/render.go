@@ -7,8 +7,8 @@ import (
 	"net/http"
 	"path/filepath"
 
-	"github.com/ASHWIN776/learning-Go/pkg/config"
-	"github.com/ASHWIN776/learning-Go/pkg/models"
+	"github.com/ASHWIN776/learning-Go/internal/config"
+	"github.com/ASHWIN776/learning-Go/internal/models"
 	"github.com/justinas/nosurf"
 )
 

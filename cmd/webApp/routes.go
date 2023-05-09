@@ -3,8 +3,8 @@ package main
 import (
 	"net/http"
 
-	"github.com/ASHWIN776/learning-Go/pkg/config"
-	"github.com/ASHWIN776/learning-Go/pkg/handlers"
+	"github.com/ASHWIN776/learning-Go/internal/config"
+	"github.com/ASHWIN776/learning-Go/internal/handlers"
 
 	"github.com/go-chi/chi/v5"
 )

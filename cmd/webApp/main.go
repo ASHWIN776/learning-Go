@@ -6,9 +6,9 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/ASHWIN776/learning-Go/pkg/config"
-	"github.com/ASHWIN776/learning-Go/pkg/handlers"
-	"github.com/ASHWIN776/learning-Go/pkg/render"
+	"github.com/ASHWIN776/learning-Go/internal/config"
+	"github.com/ASHWIN776/learning-Go/internal/handlers"
+	"github.com/ASHWIN776/learning-Go/internal/render"
 
 	"github.com/alexedwards/scs/v2"
 )
