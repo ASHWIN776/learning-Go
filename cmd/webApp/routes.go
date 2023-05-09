@@ -14,6 +14,7 @@ func routes(app *config.AppConfig) http.Handler {
 
 	mux.Use(WriteToConsole)
 	mux.Use(SessionLoad)
+	mux.Use(Nosurf)
 
 	// Routes
 	mux.Get("/", http.HandlerFunc(handlers.Repo.Home))
@@ -23,6 +24,7 @@ func routes(app *config.AppConfig) http.Handler {
 	mux.Get("/majors-suite", http.HandlerFunc(handlers.Repo.MajorsSuite))
 	mux.Get("/make-reservation", http.HandlerFunc(handlers.Repo.MakeReservation))
 	mux.Get("/search-availability", http.HandlerFunc(handlers.Repo.SearchAvailability))
+	mux.Post("/search-availability", http.HandlerFunc(handlers.Repo.PostAvailability))
 
 	// Creates a fileserver by telling it where the static directory exists
 	fileServer := http.FileServer(http.Dir("./static/"))

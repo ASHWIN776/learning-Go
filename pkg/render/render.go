@@ -9,6 +9,7 @@ import (
 
 	"github.com/ASHWIN776/learning-Go/pkg/config"
 	"github.com/ASHWIN776/learning-Go/pkg/models"
+	"github.com/justinas/nosurf"
 )
 
 var app *config.AppConfig
@@ -18,12 +19,12 @@ func GetConfig(a *config.AppConfig) {
 	app = a
 }
 
-func addDefaultData(td *models.TemplateData) *models.TemplateData {
-
+func addDefaultData(td *models.TemplateData, r *http.Request) *models.TemplateData {
+	td.CSRFToken = nosurf.Token(r)
 	return td
 }
 
-func RenderTemplate(w http.ResponseWriter, file string, td *models.TemplateData) {
+func RenderTemplate(w http.ResponseWriter, r *http.Request, file string, td *models.TemplateData) {
 	var tc map[string]*template.Template
 
 	if app.UseCache {
@@ -33,7 +34,7 @@ func RenderTemplate(w http.ResponseWriter, file string, td *models.TemplateData)
 		tc, _ = BuildTemplateCache()
 	}
 
-	td = addDefaultData(td)
+	td = addDefaultData(td, r)
 
 	execErr := tc[file].Execute(w, td)
 

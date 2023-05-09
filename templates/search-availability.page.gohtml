@@ -11,7 +11,8 @@
         <div class="col-lg-6 mx-auto">
         <h1 class="text-center">Search Availability</h1>
 
-          <form class="needs-validation" id="reservation-form" novalidate>
+          <form method="post" action="/search-availability" class="needs-validation" id="reservation-form" novalidate>
+            <input type="text" name="csrf_token" value="{{.CSRFToken}}">
             <div class="row my-4" id="reservation-dates">
               <div class="col">
                 <input placeholder="Arrival" class="form-control" required type="text" name="startDate">

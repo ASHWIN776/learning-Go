@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/ASHWIN776/learning-Go/pkg/config"
@@ -28,7 +29,7 @@ func (rep *Repository) Home(w http.ResponseWriter, r *http.Request) {
 	stringMap["text"] = "Hello, this is Ashwin Anil"
 
 	// Render template
-	render.RenderTemplate(w, "home.page.gohtml", &models.TemplateData{
+	render.RenderTemplate(w, r, "home.page.gohtml", &models.TemplateData{
 		StringMap: stringMap,
 	})
 }
@@ -40,7 +41,7 @@ func (rep *Repository) About(w http.ResponseWriter, r *http.Request) {
 	stringMap["remote_ip"] = rep.app.Session.GetString(r.Context(), "remote_ip")
 
 	// Render template
-	render.RenderTemplate(w, "about.page.gohtml", &models.TemplateData{
+	render.RenderTemplate(w, r, "about.page.gohtml", &models.TemplateData{
 		StringMap: stringMap,
 	})
 }
@@ -50,7 +51,7 @@ func (rep *Repository) Contact(w http.ResponseWriter, r *http.Request) {
 	// Perform some logic
 
 	// Render template
-	render.RenderTemplate(w, "contact.page.gohtml", &models.TemplateData{})
+	render.RenderTemplate(w, r, "contact.page.gohtml", &models.TemplateData{})
 }
 
 func (rep *Repository) GeneralsQuarters(w http.ResponseWriter, r *http.Request) {
@@ -58,7 +59,7 @@ func (rep *Repository) GeneralsQuarters(w http.ResponseWriter, r *http.Request) 
 	// Perform some logic
 
 	// Render template
-	render.RenderTemplate(w, "generals-quarters.page.gohtml", &models.TemplateData{})
+	render.RenderTemplate(w, r, "generals-quarters.page.gohtml", &models.TemplateData{})
 }
 
 func (rep *Repository) MajorsSuite(w http.ResponseWriter, r *http.Request) {
@@ -66,7 +67,7 @@ func (rep *Repository) MajorsSuite(w http.ResponseWriter, r *http.Request) {
 	// Perform some logic
 
 	// Render template
-	render.RenderTemplate(w, "majors-suite.page.gohtml", &models.TemplateData{})
+	render.RenderTemplate(w, r, "majors-suite.page.gohtml", &models.TemplateData{})
 }
 
 func (rep *Repository) MakeReservation(w http.ResponseWriter, r *http.Request) {
@@ -74,7 +75,7 @@ func (rep *Repository) MakeReservation(w http.ResponseWriter, r *http.Request) {
 	// Perform some logic
 
 	// Render template
-	render.RenderTemplate(w, "make-reservation.page.gohtml", &models.TemplateData{})
+	render.RenderTemplate(w, r, "make-reservation.page.gohtml", &models.TemplateData{})
 }
 
 func (rep *Repository) SearchAvailability(w http.ResponseWriter, r *http.Request) {
@@ -82,5 +83,12 @@ func (rep *Repository) SearchAvailability(w http.ResponseWriter, r *http.Request
 	// Perform some logic
 
 	// Render template
-	render.RenderTemplate(w, "search-availability.page.gohtml", &models.TemplateData{})
+	render.RenderTemplate(w, r, "search-availability.page.gohtml", &models.TemplateData{})
+}
+
+func (rep *Repository) PostAvailability(w http.ResponseWriter, r *http.Request) {
+	startDate := r.Form.Get("startDate")
+	endDate := r.Form.Get("endDate")
+
+	w.Write([]byte(fmt.Sprintf("Start date is %s and End date is %s", startDate, endDate)))
 }
