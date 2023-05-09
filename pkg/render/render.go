@@ -18,6 +18,11 @@ func GetConfig(a *config.AppConfig) {
 	app = a
 }
 
+func addDefaultData(td *models.TemplateData) *models.TemplateData {
+
+	return td
+}
+
 func RenderTemplate(w http.ResponseWriter, file string, td *models.TemplateData) {
 	var tc map[string]*template.Template
 
@@ -27,6 +32,8 @@ func RenderTemplate(w http.ResponseWriter, file string, td *models.TemplateData)
 	} else {
 		tc, _ = BuildTemplateCache()
 	}
+
+	td = addDefaultData(td)
 
 	execErr := tc[file].Execute(w, td)
 
