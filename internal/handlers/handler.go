@@ -77,10 +77,41 @@ func (rep *Repository) MakeReservation(w http.ResponseWriter, r *http.Request) {
 	// Perform some logic
 
 	// Render template
-	render.RenderTemplate(w, r, "make-reservation.page.gohtml", &models.TemplateData{})
+	render.RenderTemplate(w, r, "make-reservation.page.gohtml", &models.TemplateData{
+		Form: forms.New(nil),
+	})
 }
 
 func (rep *Repository) PostReservation(w http.ResponseWriter, r *http.Request) {
+	err := r.ParseForm()
+
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	// I can send this to the form to re-render if there are any errors
+	resDetails := models.Reservation{
+		FirstName:   r.Form.Get("firstName"),
+		LastName:    r.Form.Get("lastName"),
+		Email:       r.Form.Get("email"),
+		PhoneNumber: r.Form.Get("phoneNumber"),
+	}
+
+	form := forms.New(r.PostForm)
+
+	form.Has("firstName", r)
+
+	isValid := form.IsValid()
+
+	if !isValid {
+		data := make(map[string]interface{})
+		data["resDetails"] = resDetails
+
+		render.RenderTemplate(w, r, "make-reservation.page.gohtml", &models.TemplateData{
+			Form: form,
+			Data: data,
+		})
+	}
 
 }
 

@@ -11,5 +11,5 @@ type TemplateData struct {
 	Flash     string
 	Warning   string
 	Error     string
-	Form      *forms.Form // to display errors and other values after a user submits the form and a server side validation error occurs
+	Form      *forms.Form // to display errors after a user submits the form and a server side validation error occurs
 }

@@ -9,11 +9,17 @@
 <div class="container">
     <div class="row mt-3">
       <h1 class="text-center">Make Reservation</h1>
+      <!-- Make Reservation form -->
       <form class="mt-4" action="/make-reservation" method="post">
         <input type="hidden" name="csrf_token" value="{{.CSRFToken}}">
         <div class="mb-3">
           <label for="firstNameInput" class="form-label">First Name</label>
-          <input type="text" name="firstName" class="form-control" id="firstNameInput" aria-describedby="firstNameHelp">
+
+          {{with .Form.Errors.Get "firstName"}} 
+            <label for="" class="text-danger">{{.}}</label>
+          {{end}}
+
+          <input type="text" name="firstName" class="form-control {{with .Form.Errors.Get "firstName"}} is-invalid {{end}}" id="firstNameInput" aria-describedby="firstNameHelp">
         </div>
         <div class="mb-3">
           <label for="lastNameInput" class="form-label">Last Name</label>
@@ -29,6 +35,7 @@
         </div>
         <button type="submit" class="btn btn-primary">Submit</button>
       </form>
+
     </div>
 </div>
 {{end}}

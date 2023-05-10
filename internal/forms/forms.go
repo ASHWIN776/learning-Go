@@ -18,11 +18,17 @@ func New(data url.Values) *Form {
 	}
 }
 
+// Checks for validitiy, if errors are present returns false
+func (f *Form) IsValid() bool {
+	return len(f.Errors) == 0
+}
+
 // Checks for a reqd field (if it has as value or not)
 func (f *Form) Has(field string, r *http.Request) bool {
 	val := r.Form.Get(field)
 
 	if val == "" {
+		f.Errors.Add("firstName", "cannot leave this field blank")
 		return false
 	}
 
