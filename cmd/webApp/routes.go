@@ -22,7 +22,9 @@ func routes(app *config.AppConfig) http.Handler {
 	mux.Get("/contact", http.HandlerFunc(handlers.Repo.Contact))
 	mux.Get("/generals-quarters", http.HandlerFunc(handlers.Repo.GeneralsQuarters))
 	mux.Get("/majors-suite", http.HandlerFunc(handlers.Repo.MajorsSuite))
+
 	mux.Get("/make-reservation", http.HandlerFunc(handlers.Repo.MakeReservation))
+	mux.Post("/make-reservation", http.HandlerFunc(handlers.Repo.PostReservation))
 
 	mux.Get("/search-availability", http.HandlerFunc(handlers.Repo.SearchAvailability))
 	mux.Post("/search-availability-json", http.HandlerFunc(handlers.Repo.AvailabilityJSON))

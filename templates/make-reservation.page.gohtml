@@ -9,7 +9,8 @@
 <div class="container">
     <div class="row mt-3">
       <h1 class="text-center">Make Reservation</h1>
-      <form class="mt-4">
+      <form class="mt-4" action="/make-reservation" method="post">
+        <input type="hidden" name="csrf_token" value="{{.CSRFToken}}">
         <div class="mb-3">
           <label for="firstNameInput" class="form-label">First Name</label>
           <input type="text" name="firstName" class="form-control" id="firstNameInput" aria-describedby="firstNameHelp">

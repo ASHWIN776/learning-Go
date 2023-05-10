@@ -6,6 +6,7 @@ import (
 	"net/http"
 
 	"github.com/ASHWIN776/learning-Go/internal/config"
+	"github.com/ASHWIN776/learning-Go/internal/forms"
 	"github.com/ASHWIN776/learning-Go/internal/models"
 	"github.com/ASHWIN776/learning-Go/internal/render"
 )
@@ -79,12 +80,18 @@ func (rep *Repository) MakeReservation(w http.ResponseWriter, r *http.Request) {
 	render.RenderTemplate(w, r, "make-reservation.page.gohtml", &models.TemplateData{})
 }
 
+func (rep *Repository) PostReservation(w http.ResponseWriter, r *http.Request) {
+
+}
+
 func (rep *Repository) SearchAvailability(w http.ResponseWriter, r *http.Request) {
 
 	// Perform some logic
 
 	// Render template
-	render.RenderTemplate(w, r, "search-availability.page.gohtml", &models.TemplateData{})
+	render.RenderTemplate(w, r, "search-availability.page.gohtml", &models.TemplateData{
+		Form: forms.New(nil), // to display the errors and other info after a user submits
+	})
 }
 
 func (rep *Repository) PostAvailability(w http.ResponseWriter, r *http.Request) {
