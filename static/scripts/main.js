@@ -1,5 +1,6 @@
 const attention = Prompt()
 
+// Sweetalert prompts
 function Prompt(){
     function toast({
     msg = "",
@@ -74,4 +75,13 @@ function Prompt(){
         success,
         custom
     }
+}
+
+// Notie alert
+function notieAlert(type, msg)
+{
+    notie.alert({
+    type: type,
+    text: msg,
+    })
 }

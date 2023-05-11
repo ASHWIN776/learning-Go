@@ -22,13 +22,7 @@ const rangepicker = new DateRangePicker(elem, {
     format: "dd-mm-yyyy"
 }); 
 
-function alert(type, msg)
-{
-    notie.alert({
-    type: type,
-    text: msg,
-    })
-}
+
 
 const alertButton = document.querySelector("#alertButton")
 const toastButton = document.querySelector("#toastButton")

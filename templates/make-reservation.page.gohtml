@@ -62,10 +62,7 @@
   const error = "{{.Error}}"
 
   if(error){
-    attention.error({
-      title: "Error",
-      msg: error
-    })
+    notieAlert("error", error)
   }
 </script>
 {{end}}
