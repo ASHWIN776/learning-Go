@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/gob"
 	"fmt"
 	"log"
 	"net/http"
@@ -8,6 +9,7 @@ import (
 
 	"github.com/ASHWIN776/learning-Go/internal/config"
 	"github.com/ASHWIN776/learning-Go/internal/handlers"
+	"github.com/ASHWIN776/learning-Go/internal/models"
 	"github.com/ASHWIN776/learning-Go/internal/render"
 
 	"github.com/alexedwards/scs/v2"
@@ -19,6 +21,9 @@ var app config.AppConfig
 var session *scs.SessionManager
 
 func main() {
+
+	// What can I put in the session
+	gob.Register(models.Reservation{})
 
 	app.InProduction = false
 

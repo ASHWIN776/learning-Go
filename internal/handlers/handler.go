@@ -3,6 +3,7 @@ package handlers
 import (
 	"encoding/json"
 	"fmt"
+	"log"
 	"net/http"
 
 	"github.com/ASHWIN776/learning-Go/internal/config"
@@ -118,13 +119,29 @@ func (rep *Repository) PostReservation(w http.ResponseWriter, r *http.Request) {
 			Form: form,
 			Data: data,
 		})
-	} else {
-		// Render the reservation-summary.page.gohtml
-		render.RenderTemplate(w, r, "reservation-summary.page.gohtml", &models.TemplateData{
-			Data: data,
-		})
 	}
 
+	rep.app.Session.Put(r.Context(), "resDetails", resDetails)
+	http.Redirect(w, r, "/reservation-summary", http.StatusSeeOther)
+
+}
+
+func (rep *Repository) ReservationSummary(w http.ResponseWriter, r *http.Request) {
+	// Perform some logic
+	resDetails, ok := rep.app.Session.Get(r.Context(), "resDetails").(models.Reservation)
+
+	if !ok {
+		log.Println("no admission without a valid reservation")
+		http.Redirect(w, r, "/make-reservation", http.StatusSeeOther)
+	}
+
+	data := make(map[string]interface{})
+	data["resDetails"] = resDetails
+
+	// Render Template
+	render.RenderTemplate(w, r, "reservation-summary.page.gohtml", &models.TemplateData{
+		Data: data,
+	})
 }
 
 func (rep *Repository) SearchAvailability(w http.ResponseWriter, r *http.Request) {
