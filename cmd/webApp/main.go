@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/gob"
+	"errors"
 	"fmt"
 	"log"
 	"net/http"
@@ -21,7 +22,28 @@ var app config.AppConfig
 var session *scs.SessionManager
 
 func main() {
+	err := run()
 
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	srv := http.Server{
+		Addr:    portNumber,
+		Handler: routes(&app),
+	}
+
+	fmt.Printf("Serving on port %s\n", portNumber)
+	err = srv.ListenAndServe()
+
+	if err != nil {
+		fmt.Println("Failed to start the server")
+		return
+	}
+
+}
+
+func run() error {
 	// What can I put in the session
 	gob.Register(models.Reservation{})
 
@@ -30,7 +52,7 @@ func main() {
 	tc, err := render.BuildTemplateCache()
 
 	if err != nil {
-		log.Fatal("cannot build Template Cache")
+		return errors.New("cannot build template cache")
 	}
 
 	session = scs.New()
@@ -46,17 +68,5 @@ func main() {
 	// As Home and About are Methods of an instance of type Repository - So, we need the instance from render.go
 	handlers.AddRepo(&app)
 
-	srv := http.Server{
-		Addr:    portNumber,
-		Handler: routes(&app),
-	}
-
-	fmt.Printf("Serving on port %s\n", portNumber)
-	err = srv.ListenAndServe()
-
-	if err != nil {
-		fmt.Println("Failed to start the server")
-		return
-	}
-
+	return nil
 }
