@@ -58,5 +58,14 @@
 
 <!-- for own js -->
 {{define "js"}}
+<script>
+  const error = "{{.Error}}"
 
+  if(error){
+    attention.error({
+      title: "Error",
+      msg: error
+    })
+  }
+</script>
 {{end}}

@@ -76,13 +76,20 @@ func (rep *Repository) MajorsSuite(w http.ResponseWriter, r *http.Request) {
 func (rep *Repository) MakeReservation(w http.ResponseWriter, r *http.Request) {
 
 	// Perform some logic
+	query := r.URL.Query().Get("error")
+	error := ""
+	if query == "true" {
+		error = "create a reservation first"
+	}
+
 	data := make(map[string]interface{})
 	data["resDetails"] = models.Reservation{} // Creating an empty res
 
 	// Render template
 	render.RenderTemplate(w, r, "make-reservation.page.gohtml", &models.TemplateData{
-		Form: forms.New(nil),
-		Data: data,
+		Form:  forms.New(nil),
+		Data:  data,
+		Error: error,
 	})
 }
 
@@ -132,7 +139,7 @@ func (rep *Repository) ReservationSummary(w http.ResponseWriter, r *http.Request
 
 	if !ok {
 		log.Println("no admission without a valid reservation")
-		http.Redirect(w, r, "/make-reservation", http.StatusSeeOther)
+		http.Redirect(w, r, "/make-reservation?error=true", http.StatusSeeOther)
 	}
 
 	data := make(map[string]interface{})
