@@ -119,10 +119,10 @@ func (rep *Repository) PostReservation(w http.ResponseWriter, r *http.Request) {
 			Form: form,
 			Data: data,
 		})
+	} else {
+		rep.app.Session.Put(r.Context(), "resDetails", resDetails)
+		http.Redirect(w, r, "/reservation-summary", http.StatusSeeOther)
 	}
-
-	rep.app.Session.Put(r.Context(), "resDetails", resDetails)
-	http.Redirect(w, r, "/reservation-summary", http.StatusSeeOther)
 
 }
 
