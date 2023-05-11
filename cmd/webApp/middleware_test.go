@@ -6,9 +6,9 @@ import (
 )
 
 func TestWriteToConsole(t *testing.T) {
-	var myH myHandler
+	var myH http.Handler
 
-	h := WriteToConsole(&myH)
+	h := WriteToConsole(myH)
 
 	switch v := h.(type) {
 	case http.Handler:

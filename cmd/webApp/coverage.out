@@ -1,0 +1,13 @@
+mode: set
+github.com/ASHWIN776/learning-Go/cmd/webApp/main.go:24.13,27.16 2 0
+github.com/ASHWIN776/learning-Go/cmd/webApp/main.go:27.16,29.3 1 0
+github.com/ASHWIN776/learning-Go/cmd/webApp/main.go:31.2,39.16 4 0
+github.com/ASHWIN776/learning-Go/cmd/webApp/main.go:39.16,42.3 2 0
+github.com/ASHWIN776/learning-Go/cmd/webApp/main.go:46.18,54.16 4 1
+github.com/ASHWIN776/learning-Go/cmd/webApp/main.go:54.16,56.3 1 0
+github.com/ASHWIN776/learning-Go/cmd/webApp/main.go:58.2,71.12 10 1
+github.com/ASHWIN776/learning-Go/cmd/webApp/middleware.go:10.53,11.71 1 1
+github.com/ASHWIN776/learning-Go/cmd/webApp/middleware.go:11.71,14.3 2 0
+github.com/ASHWIN776/learning-Go/cmd/webApp/middleware.go:17.50,19.2 1 1
+github.com/ASHWIN776/learning-Go/cmd/webApp/middleware.go:21.45,32.2 3 1
+github.com/ASHWIN776/learning-Go/cmd/webApp/routes.go:12.49,47.2 18 1
