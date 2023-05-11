@@ -109,12 +109,18 @@ func (rep *Repository) PostReservation(w http.ResponseWriter, r *http.Request) {
 
 	isValid := form.IsValid()
 
+	data := make(map[string]interface{})
+	data["resDetails"] = resDetails
+
 	if !isValid {
-		data := make(map[string]interface{})
-		data["resDetails"] = resDetails
 
 		render.RenderTemplate(w, r, "make-reservation.page.gohtml", &models.TemplateData{
 			Form: form,
+			Data: data,
+		})
+	} else {
+		// Render the reservation-summary.page.gohtml
+		render.RenderTemplate(w, r, "reservation-summary.page.gohtml", &models.TemplateData{
 			Data: data,
 		})
 	}
