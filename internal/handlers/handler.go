@@ -3,7 +3,6 @@ package handlers
 import (
 	"encoding/json"
 	"fmt"
-	"log"
 	"net/http"
 
 	"github.com/ASHWIN776/learning-Go/internal/config"
@@ -138,8 +137,9 @@ func (rep *Repository) ReservationSummary(w http.ResponseWriter, r *http.Request
 	resDetails, ok := rep.app.Session.Get(r.Context(), "resDetails").(models.Reservation)
 
 	if !ok {
-		log.Println("no admission without a valid reservation")
-		http.Redirect(w, r, "/make-reservation?error=true", http.StatusSeeOther)
+		rep.app.Session.Put(r.Context(), "error", "no reservation found")
+		http.Redirect(w, r, "/", http.StatusTemporaryRedirect)
+		return
 	}
 
 	data := make(map[string]interface{})
