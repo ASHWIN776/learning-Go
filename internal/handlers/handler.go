@@ -75,10 +75,13 @@ func (rep *Repository) MajorsSuite(w http.ResponseWriter, r *http.Request) {
 func (rep *Repository) MakeReservation(w http.ResponseWriter, r *http.Request) {
 
 	// Perform some logic
+	data := make(map[string]interface{})
+	data["resDetails"] = models.Reservation{} // Creating an empty res
 
 	// Render template
 	render.RenderTemplate(w, r, "make-reservation.page.gohtml", &models.TemplateData{
 		Form: forms.New(nil),
+		Data: data,
 	})
 }
 
@@ -99,7 +102,8 @@ func (rep *Repository) PostReservation(w http.ResponseWriter, r *http.Request) {
 
 	form := forms.New(r.PostForm)
 
-	form.Has("firstName", r)
+	// form.Has("firstName", r)
+	form.Required(r, "firstName", "lastName", "email")
 
 	isValid := form.IsValid()
 

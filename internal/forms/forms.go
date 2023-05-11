@@ -3,6 +3,7 @@ package forms
 import (
 	"net/http"
 	"net/url"
+	"strings"
 )
 
 type Form struct {
@@ -33,4 +34,15 @@ func (f *Form) Has(field string, r *http.Request) bool {
 	}
 
 	return true
+}
+
+// Checks for required fields
+func (f *Form) Required(r *http.Request, fields ...string) {
+	for _, field := range fields {
+		val := r.Form.Get(string(field))
+
+		if strings.TrimSpace(val) == "" {
+			f.Errors.Add(field, "This field is required")
+		}
+	}
 }
