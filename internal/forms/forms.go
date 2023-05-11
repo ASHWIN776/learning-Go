@@ -1,9 +1,12 @@
 package forms
 
 import (
+	"fmt"
 	"net/http"
 	"net/url"
 	"strings"
+
+	"github.com/asaskevich/govalidator"
 )
 
 type Form struct {
@@ -44,5 +47,23 @@ func (f *Form) Required(r *http.Request, fields ...string) {
 		if strings.TrimSpace(val) == "" {
 			f.Errors.Add(field, "This field is required")
 		}
+	}
+}
+
+// Checks if a field satisfies the given length
+func (f *Form) MinLength(field string, length int, r *http.Request) {
+	val := r.Form.Get(field)
+
+	if len(val) < length {
+		f.Errors.Add(field, fmt.Sprintf("given value should be atleast %d letters", length))
+	}
+}
+
+// Checks if a field has valid email as its value
+func (f *Form) IsEmail(field string, r *http.Request) {
+	val := r.Form.Get(field)
+
+	if !govalidator.IsEmail(val) {
+		f.Errors.Add(field, "not a valid email")
 	}
 }
