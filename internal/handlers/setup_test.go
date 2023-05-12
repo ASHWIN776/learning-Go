@@ -52,7 +52,7 @@ func GetRoutes() http.Handler {
 
 	mux.Use(WriteToConsole)
 	mux.Use(SessionLoad)
-	mux.Use(Nosurf)
+	// mux.Use(Nosurf)
 
 	// Routes
 	mux.Get("/", http.HandlerFunc(Repo.Home))
