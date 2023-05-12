@@ -7,6 +7,7 @@ import (
 	"html/template"
 	"log"
 	"net/http"
+	"os"
 	"path/filepath"
 	"time"
 
@@ -34,6 +35,11 @@ func GetRoutes() http.Handler {
 	session.Cookie.Secure = app.InProduction
 
 	app.Session = session
+	// Info log (will be a place to send all the info logs - currently to stdout)
+	app.InfoLog = log.New(os.Stdout, "INFO:\t", log.Ldate|log.Ltime)
+
+	// Error log (will be a place to send all the Error logs - currently to stdout)
+	app.ErrorLog = log.New(os.Stdout, "ERROR:\t", log.Ldate|log.Ltime|log.Lshortfile)
 
 	tc, err := BuildTestTemplateCache()
 
