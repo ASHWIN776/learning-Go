@@ -76,6 +76,11 @@ var requiredTests = []struct {
 	expectedValue bool
 }{
 	{
+		formData:      []postData{},
+		fields:        []string{"name", "email"},
+		expectedValue: false,
+	},
+	{
 		formData: []postData{
 			{"name", "John"},
 			{"email", "a@gmail.com"},
@@ -135,6 +140,16 @@ var minLengthTests = []struct {
 		minLength:     5,
 		expectedValue: false,
 	},
+	{
+		formData:      postData{"name", ""},
+		minLength:     5,
+		expectedValue: false,
+	},
+	{
+		formData:      postData{},
+		minLength:     5,
+		expectedValue: false,
+	},
 }
 
 func TestForm_MinLength(t *testing.T) {
@@ -162,6 +177,14 @@ var isEmailTests = []struct {
 	},
 	{
 		formData:      postData{"email", "John"},
+		expectedValue: false,
+	},
+	{
+		formData:      postData{"email", ""},
+		expectedValue: false,
+	},
+	{
+		formData:      postData{},
 		expectedValue: false,
 	},
 }

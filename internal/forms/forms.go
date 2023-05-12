@@ -41,7 +41,7 @@ func (f *Form) Has(field string) bool {
 // Checks for required fields
 func (f *Form) Required(fields ...string) {
 	for _, field := range fields {
-		val := f.Data.Get(string(field))
+		val := f.Data.Get(field)
 
 		if strings.TrimSpace(val) == "" {
 			f.Errors.Add(field, "This field is required")
