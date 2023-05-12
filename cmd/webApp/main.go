@@ -63,6 +63,7 @@ func run() error {
 
 	app.Session = session
 	app.TemplateCache = tc
+	app.UseCache = false
 	render.GetConfig(&app)
 
 	// As Home and About are Methods of an instance of type Repository - So, we need the instance from render.go

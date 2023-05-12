@@ -2,6 +2,7 @@ package render
 
 import (
 	"errors"
+	"fmt"
 	"html/template"
 	"log"
 	"net/http"
@@ -13,6 +14,7 @@ import (
 )
 
 var app *config.AppConfig
+var pathToTemplates = "./templates"
 
 // Gets the pointer to the app config created in main.go, and assigns it to the pointer of the same type created here
 func GetConfig(a *config.AppConfig) {
@@ -51,7 +53,7 @@ func BuildTemplateCache() (map[string]*template.Template, error) {
 	tc := map[string]*template.Template{}
 
 	// Find out all the pages ending with page.gohtml in the templates directory
-	pages, pageErr := filepath.Glob("./templates/*.page.gohtml")
+	pages, pageErr := filepath.Glob(fmt.Sprintf("%s/*.page.gohtml", pathToTemplates))
 
 	if pageErr != nil {
 		log.Println("cannot find file in the specified path")
@@ -62,7 +64,7 @@ func BuildTemplateCache() (map[string]*template.Template, error) {
 	for _, page := range pages {
 		pageName := filepath.Base(page)
 		var parseErr error
-		tc[pageName], parseErr = template.ParseFiles("./templates/"+pageName, "./templates/base.layout.gohtml")
+		tc[pageName], parseErr = template.ParseFiles(fmt.Sprintf("%s/%s", pathToTemplates, pageName), fmt.Sprintf("%s/base.layout.gohtml", pathToTemplates))
 
 		if parseErr != nil {
 			log.Println("Parse Error: failed to parse ", pageName)
