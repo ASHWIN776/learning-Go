@@ -6,6 +6,11 @@ import (
 	"testing"
 )
 
+type postData struct {
+	field string
+	value string
+}
+
 func TestForm_Valid(t *testing.T) {
 	r, err := http.NewRequest("POST", "/some", nil)
 
@@ -22,30 +27,46 @@ func TestForm_Valid(t *testing.T) {
 	}
 }
 
+var hasTests = []struct {
+	formData      postData
+	field         string
+	expectedValue bool
+}{
+	{
+		formData:      postData{"name", "John"},
+		field:         "name",
+		expectedValue: true,
+	},
+	{
+		formData:      postData{"name", ""},
+		field:         "name",
+		expectedValue: false,
+	},
+	{
+		formData:      postData{},
+		field:         "name",
+		expectedValue: false,
+	},
+	{
+		formData:      postData{"name", "John"},
+		field:         "email",
+		expectedValue: false,
+	},
+}
+
 func TestForm_Has(t *testing.T) {
-	r, err := http.NewRequest("POST", "/some", nil)
+	for _, test := range hasTests {
 
-	if err != nil {
-		t.Error("could not create request")
-	}
+		formPostedData := url.Values{}
+		formPostedData.Add(test.formData.field, test.formData.value)
 
-	form := New(r.PostForm)
+		form := New(formPostedData)
 
-	isValid := form.Has("name")
+		isValid := form.Has(test.field)
 
-	if isValid {
-		t.Error("shows valid when given field does not exist")
-	}
-
-	postData := url.Values{}
-	postData.Add("name", "John Doe")
-
-	form = New(postData)
-
-	isValid = form.Has("name")
-
-	if !isValid {
-		t.Error("showed invalid when given field and its value exists")
+		if isValid != test.expectedValue {
+			t.Errorf("expected value was %t, got %t", test.expectedValue, isValid)
+		}
 	}
 }
 
