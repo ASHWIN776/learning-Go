@@ -70,33 +70,54 @@ func TestForm_Has(t *testing.T) {
 	}
 }
 
+var requiredTests = []struct {
+	formData      []postData
+	fields        []string
+	expectedValue bool
+}{
+	{
+		formData: []postData{
+			{"name", "John"},
+			{"email", "a@gmail.com"},
+		},
+		fields:        []string{"name", "email"},
+		expectedValue: true,
+	},
+	{
+		formData: []postData{
+			{"name", ""},
+			{"email", "a@gmail.com"},
+		},
+		fields:        []string{"name", "email"},
+		expectedValue: false,
+	},
+	{
+		formData: []postData{
+			{"name", "John"},
+			{"email", "a@gmail.com"},
+		},
+		fields:        []string{"name", "email"},
+		expectedValue: false,
+	},
+}
+
 func TestForm_Required(t *testing.T) {
-	r, err := http.NewRequest("POST", "/some", nil)
 
-	if err != nil {
-		t.Error("could not create request")
+	for _, test := range requiredTests {
+		formPostData := url.Values{}
+
+		for _, data := range test.formData {
+			formPostData.Add(data.field, data.value)
+		}
+
+		form := New(formPostData)
+		form.Required(test.fields...)
+		isValid := form.IsValid()
+
+		if isValid != test.expectedValue {
+			t.Errorf("expected %t, got %t for %v postData and %v fields", test.expectedValue, isValid, test.formData, test.fields)
+		}
 	}
-
-	form := New(r.PostForm)
-	form.Required("name")
-	isValid := form.IsValid()
-
-	if isValid {
-		t.Error("shows valid when given field does not exist")
-	}
-
-	postData := url.Values{}
-	postData.Add("name", "John Doe")
-	postData.Add("email", "j@gmail.com")
-
-	form = New(postData)
-	form.Required("name", "email")
-	isValid = form.IsValid()
-
-	if !isValid {
-		t.Error("shows invalid when given fields and their values exist")
-	}
-
 }
 
 func TestForm_MinLength(t *testing.T) {
