@@ -46,3 +46,28 @@ func CreateRequest() (*http.Request, error) {
 
 	return r, nil
 }
+
+func TestRenderTemplate(t *testing.T) {
+
+	pathToTemplates = "../../templates"
+	tc, err := BuildTemplateCache()
+
+	if err != nil {
+		t.Error("cannot build template cache")
+	}
+
+	app.TemplateCache = tc
+
+	myW := myWriter{}
+	r, err := CreateRequest()
+
+	if err != nil {
+		t.Error(err)
+	}
+
+	err = RenderTemplate(&myW, r, "home.page.gohtml", &models.TemplateData{})
+
+	if err != nil {
+		t.Error(err)
+	}
+}

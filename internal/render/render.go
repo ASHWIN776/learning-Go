@@ -29,7 +29,7 @@ func addDefaultData(td *models.TemplateData, r *http.Request) *models.TemplateDa
 	return td
 }
 
-func RenderTemplate(w http.ResponseWriter, r *http.Request, file string, td *models.TemplateData) {
+func RenderTemplate(w http.ResponseWriter, r *http.Request, file string, td *models.TemplateData) error {
 	var tc map[string]*template.Template
 
 	if app.UseCache {
@@ -45,7 +45,10 @@ func RenderTemplate(w http.ResponseWriter, r *http.Request, file string, td *mod
 
 	if execErr != nil {
 		log.Println(execErr)
+		return execErr
 	}
+
+	return nil
 }
 
 func BuildTemplateCache() (map[string]*template.Template, error) {
