@@ -96,7 +96,7 @@ var requiredTests = []struct {
 			{"name", "John"},
 			{"email", "a@gmail.com"},
 		},
-		fields:        []string{"name", "email"},
+		fields:        []string{"name", "phoneNumber"},
 		expectedValue: false,
 	},
 }
@@ -120,47 +120,63 @@ func TestForm_Required(t *testing.T) {
 	}
 }
 
+var minLengthTests = []struct {
+	formData      postData
+	minLength     int
+	expectedValue bool
+}{
+	{
+		formData:      postData{"name", "John"},
+		minLength:     3,
+		expectedValue: true,
+	},
+	{
+		formData:      postData{"name", "John"},
+		minLength:     5,
+		expectedValue: false,
+	},
+}
+
 func TestForm_MinLength(t *testing.T) {
-	postData := url.Values{}
-	postData.Add("name", "John")
+	for _, test := range minLengthTests {
+		formPostData := url.Values{}
+		formPostData.Add(test.formData.field, test.formData.value)
 
-	form := New(postData)
+		form := New(formPostData)
+		form.MinLength(test.formData.field, test.minLength)
+		isValid := form.IsValid()
 
-	form.MinLength("name", 5)
-	isValid := form.IsValid()
-
-	if isValid {
-		t.Error("field value doesnot satisfy the minlength and still returns valid")
-	}
-
-	postData.Set("name", "Ashwin")
-	form = New(postData) // need a new form cuz otherwise ill have to remove the previous error
-	form.MinLength("name", 4)
-	isValid = form.IsValid()
-
-	if !isValid {
-		t.Error("field value satisfies minlength but returns invalid")
+		if isValid != test.expectedValue {
+			t.Errorf("expected length is %d, given value(%s) length is %d", test.minLength, test.formData.value, len(test.formData.value))
+		}
 	}
 }
 
+var isEmailTests = []struct {
+	formData      postData
+	expectedValue bool
+}{
+	{
+		formData:      postData{"email", "a@gmail.com"},
+		expectedValue: true,
+	},
+	{
+		formData:      postData{"email", "John"},
+		expectedValue: false,
+	},
+}
+
 func TestForm_IsEmail(t *testing.T) {
-	postData := url.Values{}
-	postData.Add("email", "john")
+	for _, test := range isEmailTests {
+		formPostData := url.Values{}
+		formPostData.Add(test.formData.field, test.formData.value)
 
-	form := New(postData)
-	form.IsEmail("email")
-	isValid := form.IsValid()
+		form := New(formPostData)
+		form.IsEmail(test.formData.field)
+		isValid := form.IsValid()
 
-	if isValid {
-		t.Error("shows valid when the email is invalid")
-	}
-
-	postData.Set("email", "a@gmail.com")
-	form = New(postData)
-	form.IsEmail("email")
-	isValid = form.IsValid()
-
-	if !isValid {
-		t.Error("shows invalid when the email is valid")
+		if isValid != test.expectedValue {
+			t.Errorf("expected %t, got %t for email value: %s", test.expectedValue, isValid, test.formData.value)
+		}
 	}
 }
