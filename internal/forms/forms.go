@@ -2,7 +2,6 @@ package forms
 
 import (
 	"fmt"
-	"net/http"
 	"net/url"
 	"strings"
 
@@ -28,8 +27,8 @@ func (f *Form) IsValid() bool {
 }
 
 // Checks for a reqd field (if it has as value or not)
-func (f *Form) Has(field string, r *http.Request) bool {
-	val := r.Form.Get(field)
+func (f *Form) Has(field string) bool {
+	val := f.Data.Get(field)
 
 	if val == "" {
 		f.Errors.Add("firstName", "cannot leave this field blank")
@@ -40,9 +39,9 @@ func (f *Form) Has(field string, r *http.Request) bool {
 }
 
 // Checks for required fields
-func (f *Form) Required(r *http.Request, fields ...string) {
+func (f *Form) Required(fields ...string) {
 	for _, field := range fields {
-		val := r.Form.Get(string(field))
+		val := f.Data.Get(string(field))
 
 		if strings.TrimSpace(val) == "" {
 			f.Errors.Add(field, "This field is required")
@@ -51,8 +50,8 @@ func (f *Form) Required(r *http.Request, fields ...string) {
 }
 
 // Checks if a field satisfies the given length
-func (f *Form) MinLength(field string, length int, r *http.Request) {
-	val := r.Form.Get(field)
+func (f *Form) MinLength(field string, length int) {
+	val := f.Data.Get(field)
 
 	if len(val) < length {
 		f.Errors.Add(field, fmt.Sprintf("given value should be atleast %d letters", length))
@@ -60,8 +59,8 @@ func (f *Form) MinLength(field string, length int, r *http.Request) {
 }
 
 // Checks if a field has valid email as its value
-func (f *Form) IsEmail(field string, r *http.Request) {
-	val := r.Form.Get(field)
+func (f *Form) IsEmail(field string) {
+	val := f.Data.Get(field)
 
 	if !govalidator.IsEmail(val) {
 		f.Errors.Add(field, "not a valid email")

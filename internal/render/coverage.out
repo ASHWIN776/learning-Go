@@ -1,0 +1,15 @@
+mode: set
+github.com/ASHWIN776/learning-Go/internal/render/render.go:20.37,22.2 1 1
+github.com/ASHWIN776/learning-Go/internal/render/render.go:24.84,30.2 5 1
+github.com/ASHWIN776/learning-Go/internal/render/render.go:32.105,35.18 2 1
+github.com/ASHWIN776/learning-Go/internal/render/render.go:35.18,38.3 1 1
+github.com/ASHWIN776/learning-Go/internal/render/render.go:38.8,40.3 1 0
+github.com/ASHWIN776/learning-Go/internal/render/render.go:42.2,46.20 3 1
+github.com/ASHWIN776/learning-Go/internal/render/render.go:46.20,49.3 2 0
+github.com/ASHWIN776/learning-Go/internal/render/render.go:51.2,51.12 1 1
+github.com/ASHWIN776/learning-Go/internal/render/render.go:54.66,61.20 3 1
+github.com/ASHWIN776/learning-Go/internal/render/render.go:61.20,64.3 2 0
+github.com/ASHWIN776/learning-Go/internal/render/render.go:67.2,67.29 1 1
+github.com/ASHWIN776/learning-Go/internal/render/render.go:67.29,72.22 4 1
+github.com/ASHWIN776/learning-Go/internal/render/render.go:72.22,74.4 1 0
+github.com/ASHWIN776/learning-Go/internal/render/render.go:78.2,78.16 1 1
