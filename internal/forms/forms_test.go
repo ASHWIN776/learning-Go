@@ -164,6 +164,21 @@ func TestForm_MinLength(t *testing.T) {
 		if isValid != test.expectedValue {
 			t.Errorf("expected length is %d, given value(%s) length is %d", test.minLength, test.formData.value, len(test.formData.value))
 		}
+
+		// Checking errors.go (Get function)
+		err := form.Errors.Get(test.formData.field)
+
+		if isValid {
+			if err != "" {
+				t.Error("got error when not expecting one")
+			}
+		}
+
+		if !isValid {
+			if err == "" {
+				t.Error("expected error, did not get it")
+			}
+		}
 	}
 }
 
