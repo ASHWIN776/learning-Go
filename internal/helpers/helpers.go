@@ -18,7 +18,7 @@ func GetConfig(a *config.AppConfig) {
 func ClientError(w http.ResponseWriter, status int) {
 	app.InfoLog.Println("client error with status of ", status)
 
-	// Throw the error into w
+	// Prints it on the web
 	http.Error(w, http.StatusText(status), status)
 }
 
@@ -28,5 +28,6 @@ func ServerError(w http.ResponseWriter, err error) {
 
 	app.ErrorLog.Println(trace)
 
+	// Prints it on the web
 	http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 }

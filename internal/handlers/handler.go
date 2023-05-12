@@ -7,6 +7,7 @@ import (
 
 	"github.com/ASHWIN776/learning-Go/internal/config"
 	"github.com/ASHWIN776/learning-Go/internal/forms"
+	"github.com/ASHWIN776/learning-Go/internal/helpers"
 	"github.com/ASHWIN776/learning-Go/internal/models"
 	"github.com/ASHWIN776/learning-Go/internal/render"
 )
@@ -96,7 +97,8 @@ func (rep *Repository) PostReservation(w http.ResponseWriter, r *http.Request) {
 	err := r.ParseForm()
 
 	if err != nil {
-		fmt.Println(err)
+		helpers.ServerError(w, err)
+		return
 	}
 
 	// I can send this to the form to re-render if there are any errors
@@ -138,6 +140,7 @@ func (rep *Repository) ReservationSummary(w http.ResponseWriter, r *http.Request
 
 	if !ok {
 		rep.app.Session.Put(r.Context(), "error", "no reservation found")
+		rep.app.ErrorLog.Println("no reservation found")
 		http.Redirect(w, r, "/", http.StatusTemporaryRedirect)
 		return
 	}
@@ -182,7 +185,8 @@ func (rep *Repository) AvailabilityJSON(w http.ResponseWriter, r *http.Request) 
 	out, err := json.MarshalIndent(res, "", "    ")
 
 	if err != nil {
-		fmt.Println(err)
+		helpers.ServerError(w, err)
+		return
 	}
 
 	w.Header().Set("Content-type", "application/json")
