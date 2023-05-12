@@ -1,8 +1,10 @@
 package render
 
 import (
+	"fmt"
 	"log"
 	"net/http"
+	"path/filepath"
 	"testing"
 
 	"github.com/ASHWIN776/learning-Go/internal/models"
@@ -70,4 +72,34 @@ func TestRenderTemplate(t *testing.T) {
 	if err != nil {
 		t.Error(err)
 	}
+}
+
+func TestGetConfig(t *testing.T) {
+	GetConfig(app)
+}
+
+func TestBuildTemplateCache(t *testing.T) {
+	pathToTemplates = "../../templates"
+
+	tc, err := BuildTemplateCache()
+
+	if err != nil {
+		t.Error(err)
+	}
+
+	// Check if all the pages have its templates saved in the cache
+	pages, pageErr := filepath.Glob(fmt.Sprintf("%s/*.page.gohtml", pathToTemplates))
+
+	if pageErr != nil {
+		t.Error("cannot find file in the specified path")
+	}
+
+	// Loop through all the pages and check if the template is saved in the cache
+	for _, page := range pages {
+		pageName := filepath.Base(page)
+		if tc[pageName] == nil {
+			t.Errorf("template for %s is not present in cache", pageName)
+		}
+	}
+
 }
