@@ -1,0 +1,3 @@
+drop_foreign_key("room_restrictions", "room_id", {})
+drop_foreign_key("room_restrictions", "restriction_id", {})
+drop_foreign_key("room_restrictions", "reservation_id", {})
