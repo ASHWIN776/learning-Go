@@ -109,7 +109,7 @@ func (rep *Repository) PostReservation(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Mon Jan 2 15:04:05 MST 2006  (MST is GMT-0700) - 01/02 03:04:05PM '06 -0700
-	layout := "02-01-2006"
+	layout := "2006-01-02"
 
 	sd := r.Form.Get("startDate")
 	startDate, err := time.Parse(layout, sd)

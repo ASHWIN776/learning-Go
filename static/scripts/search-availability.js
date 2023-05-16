@@ -19,7 +19,7 @@
 
 const elem = document.getElementById('reservation-dates');
 const rangepicker = new DateRangePicker(elem, {
-    format: "dd-mm-yyyy"
+    format: "yyyy-mm-dd"
 }); 
 
 
