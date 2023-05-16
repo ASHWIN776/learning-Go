@@ -51,3 +51,35 @@ func (p *postgresDBRepo) InsertRoomRestriction(res models.RoomRestriction) error
 
 	return nil
 }
+
+// Returns a bool specifying if there is an availability or not and a potential error
+func (p *postgresDBRepo) SearchAvailabilityByDates(startDate, endDate string) (bool, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+
+	defer cancel()
+
+	var resCount int // stores the count of existing restricted rooms
+
+	stmt := `
+		select 
+			count(id) 
+		from 
+			room_restrictions 
+		where
+			$1 < end_date AND $2 > start_date
+	`
+
+	row := p.DB.QueryRowContext(ctx, stmt, startDate, endDate)
+
+	err := row.Scan(&resCount)
+	if err != nil {
+		return false, err
+	}
+
+	// If satisfied, means there is no booking overlapping the specified start and end dates
+	if resCount == 0 {
+		return true, nil
+	}
+
+	return false, nil
+}
