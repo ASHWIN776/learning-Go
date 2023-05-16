@@ -52,8 +52,8 @@ func (p *postgresDBRepo) InsertRoomRestriction(res models.RoomRestriction) error
 	return nil
 }
 
-// Returns a bool specifying if there is an availability or not and a potential error
-func (p *postgresDBRepo) SearchAvailabilityByDates(startDate, endDate string) (bool, error) {
+// Returns a bool specifying if there is an availability(of the specified room) or not, and a potential error
+func (p *postgresDBRepo) SearchAvailabilityByDates(startDate, endDate string, roomId int) (bool, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 
 	defer cancel()
@@ -66,10 +66,11 @@ func (p *postgresDBRepo) SearchAvailabilityByDates(startDate, endDate string) (b
 		from 
 			room_restrictions 
 		where
-			$1 < end_date AND $2 > start_date
+			roomId = $1 AND 
+			$2 < end_date AND $3 > start_date
 	`
 
-	row := p.DB.QueryRowContext(ctx, stmt, startDate, endDate)
+	row := p.DB.QueryRowContext(ctx, stmt, roomId, startDate, endDate)
 
 	err := row.Scan(&resCount)
 	if err != nil {
