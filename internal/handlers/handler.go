@@ -3,7 +3,6 @@ package handlers
 import (
 	"encoding/json"
 	"fmt"
-	"log"
 	"net/http"
 	"strconv"
 	"time"
@@ -116,17 +115,20 @@ func (rep *Repository) PostReservation(w http.ResponseWriter, r *http.Request) {
 	startDate, err := time.Parse(layout, sd)
 	if err != nil {
 		helpers.ServerError(w, err)
+		return
 	}
 
 	ed := r.Form.Get("endDate")
 	endDate, err := time.Parse(layout, ed)
 	if err != nil {
 		helpers.ServerError(w, err)
+		return
 	}
 
 	roomId, err := strconv.Atoi(r.Form.Get("roomId"))
 	if err != nil {
 		helpers.ServerError(w, err)
+		return
 	}
 
 	// I can send this to the form to re-render if there are any errors
@@ -166,10 +168,23 @@ func (rep *Repository) PostReservation(w http.ResponseWriter, r *http.Request) {
 	resId, err := rep.DB.InsertReservation(resDetails)
 	if err != nil {
 		helpers.ServerError(w, err)
+		return
 	}
 
 	// Insert this into the room_restrictions table
-	log.Println("Reservation Id: ", resId)
+	restrictionDetails := models.RoomRestriction{
+		StartDate:     startDate,
+		EndDate:       endDate,
+		RoomID:        roomId,
+		ReservationID: resId,
+		RestrictionID: 1,
+	}
+
+	err = rep.DB.InsertRoomRestriction(restrictionDetails)
+	if err != nil {
+		helpers.ServerError(w, err)
+		return
+	}
 
 	rep.app.Session.Put(r.Context(), "resDetails", resDetails)
 	http.Redirect(w, r, "/reservation-summary", http.StatusSeeOther)
