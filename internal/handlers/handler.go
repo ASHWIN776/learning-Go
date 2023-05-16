@@ -3,6 +3,7 @@ package handlers
 import (
 	"encoding/json"
 	"fmt"
+	"log"
 	"net/http"
 	"strconv"
 	"time"
@@ -162,10 +163,13 @@ func (rep *Repository) PostReservation(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Insert reservation in the database(reservations table)
-	err = rep.DB.InsertReservation(resDetails)
+	resId, err := rep.DB.InsertReservation(resDetails)
 	if err != nil {
 		helpers.ServerError(w, err)
 	}
+
+	// Insert this into the room_restrictions table
+	log.Println("Reservation Id: ", resId)
 
 	rep.app.Session.Put(r.Context(), "resDetails", resDetails)
 	http.Redirect(w, r, "/reservation-summary", http.StatusSeeOther)

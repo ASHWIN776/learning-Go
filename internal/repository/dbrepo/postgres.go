@@ -8,21 +8,26 @@ import (
 )
 
 // To insert the form data from make-reservation form to the reservations table in the database
-func (p *postgresDBRepo) InsertReservation(res models.Reservation) error {
+func (p *postgresDBRepo) InsertReservation(res models.Reservation) (int, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 
 	defer cancel()
 
+	// This query will insert a reservation and also return the corresponding id
 	stmt := `insert into reservations 
 	(first_name, last_name, email, phone, start_date, end_date, room_id, created_at, updated_at) 
 	values 
-	($1, $2, $3, $4, $5, $6, $7, $8, $9)`
+	($1, $2, $3, $4, $5, $6, $7, $8, $9) returning id`
 
-	_, err := p.DB.ExecContext(ctx, stmt, res.FirstName, res.LastName, res.Email, res.Phone, res.StartDate, res.EndDate, res.RoomID, time.Now(), time.Now())
+	var reservationId int
+
+	row := p.DB.QueryRowContext(ctx, stmt, res.FirstName, res.LastName, res.Email, res.Phone, res.StartDate, res.EndDate, res.RoomID, time.Now(), time.Now())
+
+	err := row.Scan(&reservationId)
 
 	if err != nil {
-		return err
+		return -1, err
 	}
 
-	return nil
+	return reservationId, nil
 }
