@@ -6,20 +6,25 @@ import (
 	"net/http"
 
 	"github.com/ASHWIN776/learning-Go/internal/config"
+	"github.com/ASHWIN776/learning-Go/internal/driver"
 	"github.com/ASHWIN776/learning-Go/internal/forms"
 	"github.com/ASHWIN776/learning-Go/internal/helpers"
 	"github.com/ASHWIN776/learning-Go/internal/models"
 	"github.com/ASHWIN776/learning-Go/internal/render"
+	"github.com/ASHWIN776/learning-Go/internal/repository"
+	"github.com/ASHWIN776/learning-Go/internal/repository/dbrepo"
 )
 
 type Repository struct {
 	app *config.AppConfig
+	DB  repository.DatabaseRepo
 }
 
 var Repo Repository
 
-func AddRepo(a *config.AppConfig) {
+func AddRepo(a *config.AppConfig, db *driver.DB) {
 	Repo.app = a
+	Repo.DB = dbrepo.NewPostgresRepo(db.SQL, a)
 }
 
 func (rep *Repository) Home(w http.ResponseWriter, r *http.Request) {

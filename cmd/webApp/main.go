@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"github.com/ASHWIN776/learning-Go/internal/config"
+	"github.com/ASHWIN776/learning-Go/internal/driver"
 	"github.com/ASHWIN776/learning-Go/internal/handlers"
 	"github.com/ASHWIN776/learning-Go/internal/helpers"
 	"github.com/ASHWIN776/learning-Go/internal/models"
@@ -22,15 +23,16 @@ const portNumber = ":8000"
 
 var app config.AppConfig
 var session *scs.SessionManager
-var infoLog *log.Logger
-var errorLog *log.Logger
 
 func main() {
-	err := run()
+	db, err := run()
 
 	if err != nil {
 		log.Fatal(err)
 	}
+
+	// Defer the connection close
+	defer db.SQL.Close()
 
 	srv := http.Server{
 		Addr:    portNumber,
@@ -47,7 +49,7 @@ func main() {
 
 }
 
-func run() error {
+func run() (*driver.DB, error) {
 	// What can I put in the session
 	gob.Register(models.Reservation{})
 
@@ -56,7 +58,7 @@ func run() error {
 	tc, err := render.BuildTemplateCache()
 
 	if err != nil {
-		return errors.New("cannot build template cache")
+		return nil, errors.New("cannot build template cache")
 	}
 
 	session = scs.New()
@@ -76,11 +78,20 @@ func run() error {
 	app.Session = session
 	app.TemplateCache = tc
 	app.UseCache = false
+
+	// Connecting to database
+	db, err := driver.ConnectSQL("host=localhost port=5432 dbname=bookings user=postgres password=pass@3750")
+
+	if err != nil {
+		return nil, err
+	}
+	log.Println("Connected to Database")
+
 	render.GetConfig(&app)
 	helpers.GetConfig(&app)
 
 	// As Home and About are Methods of an instance of type Repository - So, we need the instance from render.go
-	handlers.AddRepo(&app)
+	handlers.AddRepo(&app, db)
 
-	return nil
+	return db, nil
 }

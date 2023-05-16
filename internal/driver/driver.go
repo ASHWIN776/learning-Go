@@ -27,6 +27,7 @@ const maxDbLifetime = 5 * time.Minute
 
 // Returns the instance of DB type which has the connection pool with the above constants attached to it
 func ConnectSQL(dsn string) (*DB, error) {
+	// Get *sql.DB from New Database function
 	db, err := NewDatabase(dsn)
 
 	if err != nil {
@@ -39,7 +40,7 @@ func ConnectSQL(dsn string) (*DB, error) {
 	db.SetConnMaxLifetime(maxDbLifetime)
 
 	// Test the database again
-	err = TestDatabase(dbConn.SQL)
+	err = TestDatabase(db)
 	if err != nil {
 		log.Println("could not connect to db after setting constants")
 		return nil, err
@@ -52,7 +53,11 @@ func ConnectSQL(dsn string) (*DB, error) {
 
 // Tries to ping the database and returns whatever gets back(type of error)
 func TestDatabase(db *sql.DB) error {
-	return db.Ping()
+	if err := db.Ping(); err != nil {
+		return err
+	}
+
+	return nil
 }
 
 // Creates the connection pool and an error if any
