@@ -52,6 +52,10 @@ func main() {
 func run() (*driver.DB, error) {
 	// What can I put in the session
 	gob.Register(models.Reservation{})
+	gob.Register(models.User{})
+	gob.Register(models.Reservation{})
+	gob.Register(models.Restriction{})
+	gob.Register(models.RoomRestriction{})
 
 	app.InProduction = false
 

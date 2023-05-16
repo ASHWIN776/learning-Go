@@ -2,15 +2,8 @@ package models
 
 import "time"
 
-type Reservation struct {
-	FirstName   string
-	LastName    string
-	Email       string
-	PhoneNumber string
-}
-
-// Users model
-type Users struct {
+// User model
+type User struct {
 	ID          int
 	FirstName   string
 	LastName    string
@@ -22,23 +15,23 @@ type Users struct {
 }
 
 // Rooms model
-type Rooms struct {
+type Room struct {
 	ID        int
 	RoomName  string
 	CreatedAt time.Time
 	UpdatedAt time.Time
 }
 
-// Restrictions model
-type Restrictions struct {
+// Restriction model
+type Restriction struct {
 	ID              int
 	RestrictionName string
 	CreatedAt       time.Time
 	UpdatedAt       time.Time
 }
 
-// RoomRestrictions model
-type RoomRestrictions struct {
+// RoomRestriction model
+type RoomRestriction struct {
 	ID            int
 	StartDate     time.Time
 	EndDate       time.Time
@@ -47,13 +40,13 @@ type RoomRestrictions struct {
 	RestrictionID int
 	CreatedAt     time.Time
 	UpdatedAt     time.Time
-	Room          Rooms        // There is no necessity that I have to put the same amt of vars in these models as I do in the table
-	Reservation   Reservations // There is no necessity that I have to put the same amt of vars in these models as I do in the table
-	Restriction   Restrictions // There is no necessity that I have to put the same amt of vars in these models as I do in the table
+	Room          Room        // There is no necessity that I have to put the same amt of vars in these models as I do in the table
+	Reservation   Reservation // There is no necessity that I have to put the same amt of vars in these models as I do in the table
+	Restriction   Restriction // There is no necessity that I have to put the same amt of vars in these models as I do in the table
 }
 
 // Reservations model
-type Reservations struct {
+type Reservation struct {
 	ID        int
 	FirstName string
 	LastName  string
@@ -64,5 +57,5 @@ type Reservations struct {
 	RoomID    int
 	CreatedAt time.Time
 	UpdatedAt time.Time
-	Room      Rooms // There is no necessity that I have to put the same amt of vars in these models as I do in the table
+	Room      Room // There is no necessity that I have to put the same amt of vars in these models as I do in the table
 }

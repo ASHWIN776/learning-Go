@@ -108,10 +108,10 @@ func (rep *Repository) PostReservation(w http.ResponseWriter, r *http.Request) {
 
 	// I can send this to the form to re-render if there are any errors
 	resDetails := models.Reservation{
-		FirstName:   r.Form.Get("firstName"),
-		LastName:    r.Form.Get("lastName"),
-		Email:       r.Form.Get("email"),
-		PhoneNumber: r.Form.Get("phoneNumber"),
+		FirstName: r.Form.Get("firstName"),
+		LastName:  r.Form.Get("lastName"),
+		Email:     r.Form.Get("email"),
+		Phone:     r.Form.Get("phoneNumber"),
 	}
 
 	form := forms.New(r.PostForm)
