@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"strconv"
+	"time"
 
 	"github.com/ASHWIN776/learning-Go/internal/config"
 	"github.com/ASHWIN776/learning-Go/internal/driver"
@@ -106,12 +108,35 @@ func (rep *Repository) PostReservation(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// Mon Jan 2 15:04:05 MST 2006  (MST is GMT-0700) - 01/02 03:04:05PM '06 -0700
+	layout := "02-01-2006"
+
+	sd := r.Form.Get("startDate")
+	startDate, err := time.Parse(layout, sd)
+	if err != nil {
+		helpers.ServerError(w, err)
+	}
+
+	ed := r.Form.Get("endDate")
+	endDate, err := time.Parse(layout, ed)
+	if err != nil {
+		helpers.ServerError(w, err)
+	}
+
+	roomId, err := strconv.Atoi(r.Form.Get("roomId"))
+	if err != nil {
+		helpers.ServerError(w, err)
+	}
+
 	// I can send this to the form to re-render if there are any errors
 	resDetails := models.Reservation{
 		FirstName: r.Form.Get("firstName"),
 		LastName:  r.Form.Get("lastName"),
 		Email:     r.Form.Get("email"),
 		Phone:     r.Form.Get("phoneNumber"),
+		StartDate: startDate,
+		EndDate:   endDate,
+		RoomID:    roomId,
 	}
 
 	form := forms.New(r.PostForm)
@@ -132,10 +157,18 @@ func (rep *Repository) PostReservation(w http.ResponseWriter, r *http.Request) {
 			Form: form,
 			Data: data,
 		})
-	} else {
-		rep.app.Session.Put(r.Context(), "resDetails", resDetails)
-		http.Redirect(w, r, "/reservation-summary", http.StatusSeeOther)
+
+		return
 	}
+
+	// Insert reservation in the database(reservations table)
+	err = rep.DB.InsertReservation(resDetails)
+	if err != nil {
+		helpers.ServerError(w, err)
+	}
+
+	rep.app.Session.Put(r.Context(), "resDetails", resDetails)
+	http.Redirect(w, r, "/reservation-summary", http.StatusSeeOther)
 
 }
 
