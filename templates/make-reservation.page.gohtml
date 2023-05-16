@@ -34,6 +34,17 @@
           
           <input type="text" name="lastName" class="form-control {{with .Form.Errors.Get "lastName"}} is-invalid {{end}}" value="{{$resDetails.LastName}}" id="lastNameInput" aria-describedby="lastNameHelp">
         </div>
+        <!-- ! Start Date Input -->
+        <div class="mb-3">
+          <label for="startDateInput" class="form-label">Start Date</label>
+          <input type="text" name="startDate" class="form-control" id="startDateInput" aria-describedby="startDateHelp">
+        </div>
+        <!-- ! End Date Input -->
+        <div class="mb-3">
+          <label for="endDateInput" class="form-label">End Date</label>
+          <input type="text" name="endDate" class="form-control" id="endDateInput" aria-describedby="startDateHelp">
+        </div>
+        <input type="hidden" name="roomId" value="2">
         <!-- ! Email input group -->
         <div class="mb-3">
           <label for="emailInput" class="form-label">Email</label>
@@ -47,7 +58,7 @@
         <!--! Phone Number input group -->
         <div class="mb-3">
           <label for="phInput" class="form-label">Phone Number</label>
-          <input type="text" name="phoneNumber" value="{{$resDetails.PhoneNumber}}" class="form-control" id="phInput" aria-describedby="phInputHelp">
+          <input type="text" name="phoneNumber" value="{{$resDetails.Phone}}" class="form-control" id="phInput" aria-describedby="phInputHelp">
         </div>
         <button type="submit" class="btn btn-primary">Submit</button>
       </form>
