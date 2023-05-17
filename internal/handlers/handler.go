@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"encoding/json"
+	"errors"
 	"log"
 	"net/http"
 	"strconv"
@@ -15,6 +16,7 @@ import (
 	"github.com/ASHWIN776/learning-Go/internal/render"
 	"github.com/ASHWIN776/learning-Go/internal/repository"
 	"github.com/ASHWIN776/learning-Go/internal/repository/dbrepo"
+	"github.com/go-chi/chi/v5"
 )
 
 type Repository struct {
@@ -261,8 +263,19 @@ func (rep *Repository) PostAvailability(w http.ResponseWriter, r *http.Request) 
 	}
 
 	// Show rooms in template(if available)
+	// Inserting the reservation details(startDate and endDate) into the session
+	res := &models.Reservation{
+		StartDate: startDate,
+		EndDate:   endDate,
+	}
+
+	rep.app.Session.Put(r.Context(), "reservation", res)
+
+	// Sending rooms to the template
 	var data = make(map[string]interface{})
 	data["rooms"] = rooms
+
+	// Render the choose-room.page.gohtml page
 	render.RenderTemplate(w, r, "choose-room.page.gohtml", &models.TemplateData{
 		Data: data,
 	})
@@ -288,4 +301,28 @@ func (rep *Repository) AvailabilityJSON(w http.ResponseWriter, r *http.Request) 
 
 	w.Header().Set("Content-type", "application/json")
 	w.Write(out)
+}
+
+// Gets the roomId from the query param after the user clicks on the required room(available) and redirects the user to /make-reservation after updating the session with the roomId
+func (rep *Repository) ChooseRoom(w http.ResponseWriter, r *http.Request) {
+	// Get the roomId from the url param
+	roomId, err := strconv.Atoi(chi.URLParam(r, "id"))
+	if err != nil {
+		helpers.ServerError(w, err)
+		return
+	}
+
+	// Get the reservation detail from session and add room id
+	res, ok := rep.app.Session.Get(r.Context(), "reservation").(models.Reservation)
+	if !ok {
+		helpers.ServerError(w, errors.New("cannot get from session"))
+	}
+
+	res.ID = roomId
+
+	// Put the reservation detail back into the session and redirect the page to make-reservation
+	rep.app.Session.Put(r.Context(), "reservation", res)
+
+	// Redirect to /make-reservation
+	http.Redirect(w, r, "/make-reservation", http.StatusSeeOther)
 }

@@ -30,6 +30,7 @@ func routes(app *config.AppConfig) http.Handler {
 	mux.Get("/search-availability", http.HandlerFunc(handlers.Repo.SearchAvailability))
 	mux.Post("/search-availability-json", http.HandlerFunc(handlers.Repo.AvailabilityJSON))
 	mux.Post("/search-availability", http.HandlerFunc(handlers.Repo.PostAvailability))
+	mux.Get("/choose-room/{id}", http.HandlerFunc(handlers.Repo.ChooseRoom))
 
 	// Creates a fileserver by telling it where the static directory exists
 	fileServer := http.FileServer(http.Dir("./static/"))
