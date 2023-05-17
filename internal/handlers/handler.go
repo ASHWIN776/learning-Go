@@ -290,10 +290,40 @@ type JSONResponse struct {
 	Message string `json:"message"`
 }
 
+// Gets the dates and roomId and sends the response containing the room's availability
 func (rep *Repository) AvailabilityJSON(w http.ResponseWriter, r *http.Request) {
+
+	// Get the required info from the form - roomId, and dates(to call the SearchAvailabilityByRoomID)
+	roomId, err := strconv.Atoi(r.Form.Get("roomId"))
+	if err != nil {
+		helpers.ServerError(w, err)
+		return
+	}
+
+	sd := r.Form.Get("startDate")
+	startDate, err := time.Parse("2006-01-02", sd)
+	if err != nil {
+		helpers.ServerError(w, err)
+		return
+	}
+
+	ed := r.Form.Get("endDate")
+	endDate, err := time.Parse("2006-01-02", ed)
+	if err != nil {
+		helpers.ServerError(w, err)
+		return
+	}
+
+	isAvailable, err := rep.DB.SearchAvailabilityByRoomId(startDate, endDate, roomId)
+	if err != nil {
+		helpers.ServerError(w, err)
+		return
+	}
+
+	// Sending the availability as JSON response
 	res := JSONResponse{
-		Ok:      true,
-		Message: "Available!",
+		Ok:      isAvailable,
+		Message: "",
 	}
 
 	out, err := json.MarshalIndent(res, "", "    ")
