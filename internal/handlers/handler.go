@@ -90,7 +90,7 @@ func (rep *Repository) MakeReservation(w http.ResponseWriter, r *http.Request) {
 		helpers.ServerError(w, errors.New("cannot get from session"))
 		return
 	}
-	// Get the room info - using the roomId and put it in res --------
+	// Get the room info - using the roomId and put it in res, and update the session --------
 	room, err := rep.DB.GetRoomById(res.RoomID)
 	if err != nil {
 		helpers.ServerError(w, err)
@@ -98,6 +98,8 @@ func (rep *Repository) MakeReservation(w http.ResponseWriter, r *http.Request) {
 	}
 
 	res.Room = room
+
+	rep.app.Session.Put(r.Context(), "reservation", res) // Updated the session
 	// ---------------------------------------------------------------
 
 	sd := res.StartDate.Format("2006-01-02")
@@ -118,53 +120,24 @@ func (rep *Repository) MakeReservation(w http.ResponseWriter, r *http.Request) {
 }
 
 func (rep *Repository) PostReservation(w http.ResponseWriter, r *http.Request) {
+
+	reservation, ok := rep.app.Session.Get(r.Context(), "reservation").(models.Reservation)
+	if !ok {
+		helpers.ServerError(w, errors.New("cannot get from session"))
+		return
+	}
+
 	err := r.ParseForm()
-
-	if err != nil {
-		helpers.ServerError(w, err)
-		return
-	}
-
-	// Mon Jan 2 15:04:05 MST 2006  (MST is GMT-0700) - 01/02 03:04:05PM '06 -0700
-	layout := "2006-01-02"
-
-	sd := r.Form.Get("startDate")
-	startDate, err := time.Parse(layout, sd)
-	if err != nil {
-		helpers.ServerError(w, err)
-		return
-	}
-
-	ed := r.Form.Get("endDate")
-	endDate, err := time.Parse(layout, ed)
-	if err != nil {
-		helpers.ServerError(w, err)
-		return
-	}
-
-	roomId, err := strconv.Atoi(r.Form.Get("roomId"))
-	if err != nil {
-		helpers.ServerError(w, err)
-		return
-	}
-
-	room, err := rep.DB.GetRoomById(roomId)
 	if err != nil {
 		helpers.ServerError(w, err)
 		return
 	}
 
 	// I can send this to the form to re-render if there are any errors
-	reservation := models.Reservation{
-		FirstName: r.Form.Get("firstName"),
-		LastName:  r.Form.Get("lastName"),
-		Email:     r.Form.Get("email"),
-		Phone:     r.Form.Get("phoneNumber"),
-		StartDate: startDate,
-		EndDate:   endDate,
-		RoomID:    roomId,
-		Room:      room,
-	}
+	reservation.FirstName = r.Form.Get("firstName")
+	reservation.LastName = r.Form.Get("lastName")
+	reservation.Email = r.Form.Get("email")
+	reservation.Phone = r.Form.Get("phoneNumber")
 
 	form := forms.New(r.PostForm)
 
@@ -180,8 +153,8 @@ func (rep *Repository) PostReservation(w http.ResponseWriter, r *http.Request) {
 
 	if !isValid {
 		var stringMap = make(map[string]string)
-		stringMap["startDate"] = sd
-		stringMap["endDate"] = ed
+		stringMap["startDate"] = reservation.StartDate.Format("2006-01-02")
+		stringMap["endDate"] = reservation.EndDate.Format("2006-01-02")
 
 		render.RenderTemplate(w, r, "make-reservation.page.gohtml", &models.TemplateData{
 			Form:      form,
@@ -201,9 +174,9 @@ func (rep *Repository) PostReservation(w http.ResponseWriter, r *http.Request) {
 
 	// Insert this into the room_restrictions table
 	restrictionDetails := models.RoomRestriction{
-		StartDate:     startDate,
-		EndDate:       endDate,
-		RoomID:        roomId,
+		StartDate:     reservation.StartDate,
+		EndDate:       reservation.EndDate,
+		RoomID:        reservation.RoomID,
 		ReservationID: resId,
 		RestrictionID: 1,
 	}
@@ -214,6 +187,7 @@ func (rep *Repository) PostReservation(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// Updating the session again
 	rep.app.Session.Put(r.Context(), "reservation", reservation)
 	http.Redirect(w, r, "/reservation-summary", http.StatusSeeOther)
 
@@ -222,7 +196,6 @@ func (rep *Repository) PostReservation(w http.ResponseWriter, r *http.Request) {
 func (rep *Repository) ReservationSummary(w http.ResponseWriter, r *http.Request) {
 	// Perform some logic
 	reservation, ok := rep.app.Session.Get(r.Context(), "reservation").(models.Reservation)
-
 	if !ok {
 		rep.app.Session.Put(r.Context(), "error", "no reservation found")
 		rep.app.ErrorLog.Println("no reservation found")
@@ -233,9 +206,14 @@ func (rep *Repository) ReservationSummary(w http.ResponseWriter, r *http.Request
 	data := make(map[string]interface{})
 	data["reservation"] = reservation
 
+	stringMap := make(map[string]string)
+	stringMap["startDate"] = reservation.StartDate.Format("2006-01-02")
+	stringMap["endDate"] = reservation.EndDate.Format("2006-01-02")
+
 	// Render Template
 	render.RenderTemplate(w, r, "reservation-summary.page.gohtml", &models.TemplateData{
-		Data: data,
+		Data:      data,
+		StringMap: stringMap,
 	})
 }
 

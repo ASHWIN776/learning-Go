@@ -11,6 +11,7 @@
       <h1 class="text-center">Reservation Summary</h1>
       <table class="table table-striped mt-4">
         <tbody>
+            {{$date := .StringMap}}
             {{with .Data.reservation}}
                 <tr>
                     <td class="fw-bold">Room Name</td>
@@ -26,11 +27,11 @@
                 </tr>
                 <tr>
                     <td class="fw-bold">Start Date</td>
-                    <td>{{.StartDate}}</td>
+                    <td>{{$date.startDate}}</td>
                 </tr>
                 <tr>
                     <td class="fw-bold">End Date</td>
-                    <td>{{.EndDate}}</td>
+                    <td>{{$date.endDate}}</td>
                 </tr>
                 <tr>
                     <td class="fw-bold">Phone Number</td>
