@@ -19,5 +19,6 @@
 
 const elem = document.getElementById('reservation-form');
 const rangepicker = new DateRangePicker(elem, {
-    format: "yyyy-mm-dd"
+    format: "yyyy-mm-dd",
+    minDate: new Date()
 }); 
