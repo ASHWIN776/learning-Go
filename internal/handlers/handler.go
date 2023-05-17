@@ -286,8 +286,11 @@ func (rep *Repository) PostAvailability(w http.ResponseWriter, r *http.Request) 
 }
 
 type JSONResponse struct {
-	Ok      bool   `json:"ok"`
-	Message string `json:"message"`
+	Ok        bool   `json:"ok"`
+	Message   string `json:"message"`
+	RoomID    string `json:"roomId"`
+	StartDate string `json:"startDate"`
+	EndDate   string `json:"endDate"`
 }
 
 // Gets the dates and roomId and sends the response containing the room's availability
@@ -322,8 +325,11 @@ func (rep *Repository) AvailabilityJSON(w http.ResponseWriter, r *http.Request) 
 
 	// Sending the availability as JSON response
 	res := JSONResponse{
-		Ok:      isAvailable,
-		Message: "",
+		Ok:        isAvailable,
+		Message:   "",
+		RoomID:    strconv.Itoa(roomId),
+		StartDate: sd,
+		EndDate:   ed,
 	}
 
 	out, err := json.MarshalIndent(res, "", "    ")
@@ -356,6 +362,39 @@ func (rep *Repository) ChooseRoom(w http.ResponseWriter, r *http.Request) {
 
 	// Put the reservation detail back into the session and redirect the page to make-reservation
 	rep.app.Session.Put(r.Context(), "reservation", res)
+
+	// Redirect to /make-reservation
+	http.Redirect(w, r, "/make-reservation", http.StatusSeeOther)
+}
+
+func (rep *Repository) BookRoom(w http.ResponseWriter, r *http.Request) {
+	id, err := strconv.Atoi(r.URL.Query().Get("roomId"))
+	if err != nil {
+		helpers.ServerError(w, err)
+		return
+	}
+
+	startDate, err := time.Parse("2006-01-02", r.URL.Query().Get("s"))
+	if err != nil {
+		helpers.ServerError(w, err)
+		return
+	}
+
+	endDate, err := time.Parse("2006-01-02", r.URL.Query().Get("e"))
+	if err != nil {
+		helpers.ServerError(w, err)
+		return
+	}
+
+	// Creating a reservation - to be put in the session and passed on to /make-reservation
+	reservation := models.Reservation{
+		RoomID:    id,
+		StartDate: startDate,
+		EndDate:   endDate,
+	}
+
+	// reservation added to the session
+	rep.app.Session.Put(r.Context(), "reservation", reservation)
 
 	// Redirect to /make-reservation
 	http.Redirect(w, r, "/make-reservation", http.StatusSeeOther)

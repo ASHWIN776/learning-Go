@@ -13,12 +13,14 @@
       <h1 class="text-center">Make Reservation</h1>
       <p class="fw-bold">Reservation Details</p>
       <p>Room Name: {{$reservation.Room.RoomName}}</p>
+      
       <!-- Make Reservation form -->
       <form class="mt-4" action="/make-reservation" method="post" novalidate>
         <!-- Hidden Inputs -->
         <input type="hidden" name="csrf_token" value="{{.CSRFToken}}">
         <input type="hidden" name="startDate" value="{{.StringMap.startDate}}">
         <input type="hidden" name="endDate" value="{{.StringMap.endDate}}">
+        
         <!--! First Name input group -->
         <div class="mb-3">
           <label for="firstNameInput" class="form-label">First Name</label>

@@ -69,10 +69,21 @@
             const data = await res.json()
 
             if(data.ok){
-                console.log("room is available")
+                const html = `
+                    <a href="/book-room?roomId=${data.roomId}&s=${data.startDate}&e=${data.endDate}"><p class="btn btn-primary">Book Now</p></a>
+                `
+                attention.custom({
+                    icon: "success",
+                    title:"Book Now",
+                    html,
+                    showConfirmButton: false
+                })
             }
             else {
-                console.log("room is not available")
+                attention.error({
+                    title: "No Availability",
+                    msg: "All rooms are booked"
+                })
             }
         }
 

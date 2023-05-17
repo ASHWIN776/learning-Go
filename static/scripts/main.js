@@ -36,8 +36,8 @@ function Prompt(){
         }
 
     function error({
-    title = "",
-    msg = "",
+        title = "",
+        msg = "",
     }){
         Swal.fire({
             icon: 'error',
@@ -47,17 +47,21 @@ function Prompt(){
     }
 
     async function custom({
+        icon = "",
         title = "",
         html = "",
+        showConfirmButton = true,
         callback = () => {},
         willOpen = () => {},
         didOpen = () => {},
         preConfirm = () => {}
     }){
         const { value: formValues } = await Swal.fire({
+            icon,
             title,
             html,
             focusConfirm: false,
+            showConfirmButton: showConfirmButton,
             showCancelButton: true,
             willOpen,
             preConfirm,
