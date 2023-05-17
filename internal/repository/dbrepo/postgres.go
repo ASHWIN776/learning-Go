@@ -61,13 +61,13 @@ func (p *postgresDBRepo) SearchAvailabilityByRoomId(startDate, endDate string, r
 	var resCount int // stores the count of existing restricted rooms
 
 	stmt := `
-		select 
-			count(id) 
-		from 
-			room_restrictions 
-		where
-			roomId = $1 AND 
-			$2 < end_date AND $3 > start_date
+	select 
+		count(id) 
+	from 
+		room_restrictions 
+	where
+		roomId = $1 AND 
+		$2 < end_date AND $3 > start_date
 	`
 
 	row := p.DB.QueryRowContext(ctx, stmt, roomId, startDate, endDate)
@@ -83,4 +83,51 @@ func (p *postgresDBRepo) SearchAvailabilityByRoomId(startDate, endDate string, r
 	}
 
 	return false, nil
+}
+
+// Returns a slice of all rooms available to book for the startDate and endDate range, and potentially an error if any
+func (p *postgresDBRepo) SearchAvailabilityForAllRooms(startDate, endDate string) ([]models.Room, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+
+	defer cancel()
+
+	stmt := `
+	select 
+		r.id
+	from 
+		rooms r
+	where 
+		r.id not in 
+		(select room_id from room_restrictions where $1 < end_date and $2 > start_date);
+	`
+
+	rows, err := p.DB.QueryContext(ctx, stmt, startDate, endDate)
+	if err != nil {
+		return nil, err
+	}
+
+	var allRooms []models.Room
+	var id int
+	var room_name string
+	var created_at, updated_at time.Time
+
+	for rows.Next() {
+		err := rows.Scan(&id, &room_name, &created_at, &updated_at)
+		if err != nil {
+			return nil, err
+		}
+
+		allRooms = append(allRooms, models.Room{
+			ID:        id,
+			RoomName:  room_name,
+			CreatedAt: created_at,
+			UpdatedAt: updated_at,
+		})
+	}
+
+	if err = rows.Err(); err != nil {
+		return nil, err
+	}
+
+	return allRooms, nil
 }
