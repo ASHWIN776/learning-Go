@@ -12,7 +12,6 @@
         <h1 class="text-center">Search Availability</h1>
 
           <form method="post" action="/search-availability" class="needs-validation" id="reservation-form" novalidate>
-            <input type="hidden" name="csrf_token" value="{{.CSRFToken}}">
             <div class="row my-4" id="reservation-dates">
               <div class="col">
                 <input placeholder="Arrival" class="form-control" required type="text" name="startDate">
@@ -21,34 +20,17 @@
                 <input placeholder="Departure" class="form-control" required type="text" name="endDate">  
               </div>
             </div>
+            <input type="hidden" name="csrf_token" value="{{.CSRFToken}}">
 
             <button type="submit" class="btn btn-primary">Submit</button>
           </form>
         
         </div>
     </div>
-
-    <div class="row mt-5">
-      <div class="col-lg-2">
-        <button type="button" id="alertButton" class="btn btn-outline-secondary">Click to alert</button>
-      </div>
-      <div class="col-lg-2">
-        <button type="button" id="toastButton" class="btn btn-outline-success">Show toast</button>
-      </div>
-      <div class="col-lg-2">
-        <button type="button" id="successModalButton" class="btn btn-outline-success">Show success modal</button>
-      </div>
-      <div class="col-lg-2">
-        <button type="button" id="errorModalButton" class="btn btn-outline-success">Show error modal</button>
-      </div>
-      <div class="col-lg-2">
-        <button type="button" id="formModalButton" class="btn btn-outline-success">Show Form</button>
-      </div>
-    </div>
 </div>
 {{end}}
 
 <!-- For own js -->
 {{define "js"}}
-<script src="/static/scripts/search-availability.js"></script>
+<script src="../static/scripts/search-availability.js"></script>
 {{end}}

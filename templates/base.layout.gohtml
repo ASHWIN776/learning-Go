@@ -83,26 +83,27 @@
     <!-- External JS available to all the pages -->
     <script src="/static/scripts/main.js"></script>
 
+    <script>
+        const error = "{{.Error}}"
+        const flash = "{{.Flash}}"
+        const warning = "{{.Warning}}"
+
+        if(error){
+            notieAlert("error", error)
+        }
+
+        else if(flash){
+            notieAlert("success", flash)
+        }
+
+        else if(warning){
+            notieAlert("warning", warning)
+        }
+
+    </script>
     <!-- Page's own js -->
     {{block "js" .}}
-        <script>
-            const error = "{{.Error}}"
-            const flash = "{{.Flash}}"
-            const warning = "{{.Warning}}"
-
-            if(error){
-                notieAlert("error", error)
-            }
-
-            else if(flash){
-                notieAlert("success", flash)
-            }
-
-            else if(warning){
-                notieAlert("warning", warning)
-            }
-
-        </script>
+        
     {{end}}
 </body>
 </html>

@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"encoding/json"
-	"fmt"
 	"net/http"
 	"strconv"
 	"time"
@@ -222,10 +221,49 @@ func (rep *Repository) SearchAvailability(w http.ResponseWriter, r *http.Request
 }
 
 func (rep *Repository) PostAvailability(w http.ResponseWriter, r *http.Request) {
-	startDate := r.Form.Get("startDate")
-	endDate := r.Form.Get("endDate")
+	// Parsing the form to populate r.Form map
+	err := r.ParseForm()
+	if err != nil {
+		helpers.ServerError(w, err)
+		return
+	}
 
-	w.Write([]byte(fmt.Sprintf("Start date is %s and End date is %s", startDate, endDate)))
+	layout := "2006-01-02"
+
+	sd := r.Form.Get("startDate")
+	startDate, err := time.Parse(layout, sd)
+	if err != nil {
+		helpers.ServerError(w, err)
+		return
+	}
+
+	ed := r.Form.Get("endDate")
+	endDate, err := time.Parse(layout, ed)
+	if err != nil {
+		helpers.ServerError(w, err)
+		return
+	}
+
+	// Get available rooms
+	rooms, err := rep.DB.SearchAvailabilityForAllRooms(startDate, endDate)
+	if err != nil {
+		helpers.ServerError(w, err)
+		return
+	}
+
+	// If not available - error message in session
+	if len(rooms) == 0 {
+		rep.app.Session.Put(r.Context(), "error", "no available rooms")
+		http.Redirect(w, r, "/search-availability", http.StatusTemporaryRedirect)
+		return
+	}
+
+	// Show rooms in template(if available)
+	var data = make(map[string]interface{})
+	data["rooms"] = rooms
+	render.RenderTemplate(w, r, "choose-room.page.gohtml", &models.TemplateData{
+		Data: data,
+	})
 }
 
 type JSONResponse struct {

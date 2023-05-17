@@ -2,6 +2,7 @@ package dbrepo
 
 import (
 	"context"
+	"log"
 	"time"
 
 	"github.com/ASHWIN776/learning-Go/internal/models"
@@ -86,14 +87,14 @@ func (p *postgresDBRepo) SearchAvailabilityByRoomId(startDate, endDate string, r
 }
 
 // Returns a slice of all rooms available to book for the startDate and endDate range, and potentially an error if any
-func (p *postgresDBRepo) SearchAvailabilityForAllRooms(startDate, endDate string) ([]models.Room, error) {
+func (p *postgresDBRepo) SearchAvailabilityForAllRooms(startDate, endDate time.Time) ([]models.Room, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 
 	defer cancel()
 
 	stmt := `
 	select 
-		r.id
+		*
 	from 
 		rooms r
 	where 
@@ -129,5 +130,6 @@ func (p *postgresDBRepo) SearchAvailabilityForAllRooms(startDate, endDate string
 		return nil, err
 	}
 
+	log.Println(allRooms)
 	return allRooms, nil
 }

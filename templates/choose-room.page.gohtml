@@ -1,0 +1,24 @@
+{{template "base" .}}
+
+<!-- For own css -->
+{{define "css"}}
+
+{{end}}
+
+
+{{define "content"}}
+<div class="container">
+    <div class="row mt-3">
+        <h1 class="text-center">Choose a Room</h1>
+        {{range .Data.rooms}}
+            <p>{{.RoomName}}</p>
+        {{end}}
+    </div>
+</div>
+
+{{end}}
+
+<!-- For own js -->
+{{define "js"}}
+    
+{{end}}
