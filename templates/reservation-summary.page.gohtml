@@ -9,24 +9,38 @@
 <div class="container">
     <div class="row mt-3">
       <h1 class="text-center">Reservation Summary</h1>
-      <table class="table table-striped">
-        <thead>
-            <tr>
-                <th>First Name</th>
-                <th>Last Name</th>
-                <th>Email</th>
-                <th>Phone Number</th>
-            </tr>
-        </thead>
+      <table class="table table-striped mt-4">
         <tbody>
-            <tr>
-                {{with .Data.resDetails}}
-                <td>{{.FirstName}}</td>
-                <td>{{.LastName}}</td>
-                <td>{{.Email}}</td>
-                <td>{{.Phone}}</td>
-                {{end}}
-            </tr>
+            {{with .Data.reservation}}
+                <tr>
+                    <td class="fw-bold">Room Name</td>
+                    <td>{{.Room.RoomName}}</td>
+                </tr>
+                <tr>
+                    <td class="fw-bold">First Name</td>
+                    <td>{{.FirstName}}</td>
+                </tr>
+                <tr>
+                    <td class="fw-bold">Last Name</td>
+                    <td>{{.LastName}}</td>
+                </tr>
+                <tr>
+                    <td class="fw-bold">Start Date</td>
+                    <td>{{.StartDate}}</td>
+                </tr>
+                <tr>
+                    <td class="fw-bold">End Date</td>
+                    <td>{{.EndDate}}</td>
+                </tr>
+                <tr>
+                    <td class="fw-bold">Phone Number</td>
+                    <td>{{.Phone}}</td>
+                </tr>
+                <tr>
+                    <td class="fw-bold">Email</td>
+                    <td>{{.Email}}</td>
+                </tr>
+            {{end}}
         </tbody>
       </table>
     </div>

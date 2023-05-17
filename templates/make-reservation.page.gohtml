@@ -7,13 +7,18 @@
 
 {{define "content"}}
 
-{{$resDetails := .Data.resDetails}}
+{{$reservation := .Data.reservation}}
 <div class="container">
     <div class="row mt-3">
       <h1 class="text-center">Make Reservation</h1>
+      <p class="fw-bold">Reservation Details</p>
+      <p>Room Name: {{$reservation.Room.RoomName}}</p>
       <!-- Make Reservation form -->
       <form class="mt-4" action="/make-reservation" method="post" novalidate>
+        <!-- Hidden Inputs -->
         <input type="hidden" name="csrf_token" value="{{.CSRFToken}}">
+        <input type="hidden" name="startDate" value="{{.StringMap.startDate}}">
+        <input type="hidden" name="endDate" value="{{.StringMap.endDate}}">
         <!--! First Name input group -->
         <div class="mb-3">
           <label for="firstNameInput" class="form-label">First Name</label>
@@ -22,7 +27,7 @@
             <label for="" class="text-danger">{{.}}</label>
           {{end}}
           
-          <input type="text" name="firstName" class="form-control {{with .Form.Errors.Get "firstName"}} is-invalid {{end}}" value="{{$resDetails.FirstName}}" id="firstNameInput" aria-describedby="firstNameHelp">
+          <input type="text" name="firstName" class="form-control {{with .Form.Errors.Get "firstName"}} is-invalid {{end}}" value="{{$reservation.FirstName}}" id="firstNameInput" aria-describedby="firstNameHelp">
         </div>
         <!--! Last Name input group -->
         <div class="mb-3">
@@ -32,17 +37,17 @@
             <label for="" class="text-danger">{{.}}</label>
           {{end}}
           
-          <input type="text" name="lastName" class="form-control {{with .Form.Errors.Get "lastName"}} is-invalid {{end}}" value="{{$resDetails.LastName}}" id="lastNameInput" aria-describedby="lastNameHelp">
+          <input type="text" name="lastName" class="form-control {{with .Form.Errors.Get "lastName"}} is-invalid {{end}}" value="{{$reservation.LastName}}" id="lastNameInput" aria-describedby="lastNameHelp">
         </div>
         <!-- ! Start Date Input -->
         <div class="mb-3">
           <label for="startDateInput" class="form-label">Start Date</label>
-          <input type="text" name="startDate" class="form-control" id="startDateInput" aria-describedby="startDateHelp">
+          <input type="text" class="form-control" id="startDateInput" aria-describedby="startDateHelp" value="{{.StringMap.startDate}}" disabled>
         </div>
         <!-- ! End Date Input -->
         <div class="mb-3">
           <label for="endDateInput" class="form-label">End Date</label>
-          <input type="text" name="endDate" class="form-control" id="endDateInput" aria-describedby="startDateHelp">
+          <input type="text" class="form-control" id="endDateInput" aria-describedby="startDateHelp" value="{{.StringMap.endDate}}" disabled>
         </div>
         <input type="hidden" name="roomId" value="2">
         <!-- ! Email input group -->
@@ -53,12 +58,12 @@
             <label for="" class="text-danger">{{.}}</label>
           {{end}}
 
-          <input type="email" name="email" class="form-control {{with .Form.Errors.Get "email"}} is-invalid {{end}}" value="{{$resDetails.Email}}" id="emailInput" aria-describedby="emailHelp">
+          <input type="email" name="email" class="form-control {{with .Form.Errors.Get "email"}} is-invalid {{end}}" value="{{$reservation.Email}}" id="emailInput" aria-describedby="emailHelp">
         </div>
         <!--! Phone Number input group -->
         <div class="mb-3">
           <label for="phInput" class="form-label">Phone Number</label>
-          <input type="text" name="phoneNumber" value="{{$resDetails.Phone}}" class="form-control" id="phInput" aria-describedby="phInputHelp">
+          <input type="text" name="phoneNumber" value="{{$reservation.Phone}}" class="form-control" id="phInput" aria-describedby="phInputHelp">
         </div>
         <button type="submit" class="btn btn-primary">Submit</button>
       </form>

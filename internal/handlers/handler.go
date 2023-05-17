@@ -84,21 +84,36 @@ func (rep *Repository) MajorsSuite(w http.ResponseWriter, r *http.Request) {
 
 func (rep *Repository) MakeReservation(w http.ResponseWriter, r *http.Request) {
 
-	// Perform some logic
-	query := r.URL.Query().Get("error")
-	error := ""
-	if query == "true" {
-		error = "create a reservation first"
+	data := make(map[string]interface{})
+	res, ok := rep.app.Session.Get(r.Context(), "reservation").(models.Reservation)
+	if !ok {
+		helpers.ServerError(w, errors.New("cannot get from session"))
+		return
+	}
+	// Get the room info - using the roomId and put it in res --------
+	room, err := rep.DB.GetRoomById(res.RoomID)
+	if err != nil {
+		helpers.ServerError(w, err)
+		return
 	}
 
-	data := make(map[string]interface{})
-	data["resDetails"] = models.Reservation{} // Creating an empty res
+	res.Room = room
+	// ---------------------------------------------------------------
+
+	sd := res.StartDate.Format("2006-01-02")
+	ed := res.EndDate.Format("2006-01-02")
+
+	var stringMap = make(map[string]string)
+	stringMap["startDate"] = sd
+	stringMap["endDate"] = ed
+
+	data["reservation"] = res
 
 	// Render template
 	render.RenderTemplate(w, r, "make-reservation.page.gohtml", &models.TemplateData{
-		Form:  forms.New(nil),
-		Data:  data,
-		Error: error,
+		Form:      forms.New(nil),
+		Data:      data,
+		StringMap: stringMap,
 	})
 }
 
@@ -133,8 +148,14 @@ func (rep *Repository) PostReservation(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	room, err := rep.DB.GetRoomById(roomId)
+	if err != nil {
+		helpers.ServerError(w, err)
+		return
+	}
+
 	// I can send this to the form to re-render if there are any errors
-	resDetails := models.Reservation{
+	reservation := models.Reservation{
 		FirstName: r.Form.Get("firstName"),
 		LastName:  r.Form.Get("lastName"),
 		Email:     r.Form.Get("email"),
@@ -142,6 +163,7 @@ func (rep *Repository) PostReservation(w http.ResponseWriter, r *http.Request) {
 		StartDate: startDate,
 		EndDate:   endDate,
 		RoomID:    roomId,
+		Room:      room,
 	}
 
 	form := forms.New(r.PostForm)
@@ -154,20 +176,24 @@ func (rep *Repository) PostReservation(w http.ResponseWriter, r *http.Request) {
 	isValid := form.IsValid()
 
 	data := make(map[string]interface{})
-	data["resDetails"] = resDetails
+	data["reservation"] = reservation
 
 	if !isValid {
+		var stringMap = make(map[string]string)
+		stringMap["startDate"] = sd
+		stringMap["endDate"] = ed
 
 		render.RenderTemplate(w, r, "make-reservation.page.gohtml", &models.TemplateData{
-			Form: form,
-			Data: data,
+			Form:      form,
+			Data:      data,
+			StringMap: stringMap,
 		})
 
 		return
 	}
 
 	// Insert reservation in the database(reservations table)
-	resId, err := rep.DB.InsertReservation(resDetails)
+	resId, err := rep.DB.InsertReservation(reservation)
 	if err != nil {
 		helpers.ServerError(w, err)
 		return
@@ -188,14 +214,14 @@ func (rep *Repository) PostReservation(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	rep.app.Session.Put(r.Context(), "resDetails", resDetails)
+	rep.app.Session.Put(r.Context(), "reservation", reservation)
 	http.Redirect(w, r, "/reservation-summary", http.StatusSeeOther)
 
 }
 
 func (rep *Repository) ReservationSummary(w http.ResponseWriter, r *http.Request) {
 	// Perform some logic
-	resDetails, ok := rep.app.Session.Get(r.Context(), "resDetails").(models.Reservation)
+	reservation, ok := rep.app.Session.Get(r.Context(), "reservation").(models.Reservation)
 
 	if !ok {
 		rep.app.Session.Put(r.Context(), "error", "no reservation found")
@@ -205,7 +231,7 @@ func (rep *Repository) ReservationSummary(w http.ResponseWriter, r *http.Request
 	}
 
 	data := make(map[string]interface{})
-	data["resDetails"] = resDetails
+	data["reservation"] = reservation
 
 	// Render Template
 	render.RenderTemplate(w, r, "reservation-summary.page.gohtml", &models.TemplateData{
@@ -318,7 +344,7 @@ func (rep *Repository) ChooseRoom(w http.ResponseWriter, r *http.Request) {
 		helpers.ServerError(w, errors.New("cannot get from session"))
 	}
 
-	res.ID = roomId
+	res.RoomID = roomId
 
 	// Put the reservation detail back into the session and redirect the page to make-reservation
 	rep.app.Session.Put(r.Context(), "reservation", res)

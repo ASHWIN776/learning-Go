@@ -133,3 +133,27 @@ func (p *postgresDBRepo) SearchAvailabilityForAllRooms(startDate, endDate time.T
 	log.Println(allRooms)
 	return allRooms, nil
 }
+
+func (p *postgresDBRepo) GetRoomById(id int) (models.Room, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+
+	defer cancel()
+
+	stmt := `
+	select 
+		*
+	from rooms
+	where
+		id = $1 
+	`
+
+	row := p.DB.QueryRowContext(ctx, stmt, id)
+	var room models.Room
+
+	err := row.Scan(&room.ID, &room.RoomName, &room.CreatedAt, &room.UpdatedAt)
+	if err != nil {
+		return room, err
+	}
+
+	return room, nil
+}
