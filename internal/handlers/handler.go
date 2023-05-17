@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"encoding/json"
+	"log"
 	"net/http"
 	"strconv"
 	"time"
@@ -254,7 +255,8 @@ func (rep *Repository) PostAvailability(w http.ResponseWriter, r *http.Request) 
 	// If not available - error message in session
 	if len(rooms) == 0 {
 		rep.app.Session.Put(r.Context(), "error", "no available rooms")
-		http.Redirect(w, r, "/search-availability", http.StatusTemporaryRedirect)
+		log.Println("No rooms")
+		http.Redirect(w, r, "/search-availability", http.StatusSeeOther)
 		return
 	}
 
