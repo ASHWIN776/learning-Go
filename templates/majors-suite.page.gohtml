@@ -39,7 +39,7 @@
 
     checkAvailibilityBtn.addEventListener("click", () => {
         const html = `
-        <form class="needs-validation" id="reservation-form" novalidate>
+        <form class="needs-validation" id="search-availability-form" novalidate>
             <div class="row w-90 mx-auto my-4" id="reservation-dates-modal">
             <div class="col">
                 <input disabled id="startDate" placeholder="Arrival" class="form-control" required type="text" name="startDate">
@@ -50,7 +50,70 @@
             </div>
         </form> 
         `
-        attention.custom({title: "Search Availability", html})
+        // this callback is called whenever the form is submitted
+        const callback = async () => {
+            const form = document.querySelector("#search-availability-form")
+            const payload = new FormData(form)
+    
+            payload.append("csrf_token", "{{.CSRFToken}}")
+            payload.append("roomId", "3")
+    
+            // Post req
+            const res = await fetch("/search-availability-json", {
+                method: "POST",
+                body: payload
+            })
+    
+            console.log(res)
+            const data = await res.json()
+    
+            if(data.ok){
+                const html = `
+                    <a href="/book-room?roomId=${data.roomId}&s=${data.startDate}&e=${data.endDate}"><p class="btn btn-primary">Book Now</p></a>
+                `
+                attention.custom({
+                    icon: "success",
+                    title:"Book Now",
+                    html,
+                    showConfirmButton: false
+                })
+            }
+            else {
+                attention.error({
+                    title: "No Availability",
+                    msg: "All rooms are booked"
+                })
+            }
+        }
+    
+        // Sweetalert func
+        const willOpen = () => {
+            const elem = document.getElementById('reservation-dates-modal');
+            const rangepicker = new DateRangePicker(elem, {
+                format:"yyyy-mm-dd",
+                minDate: new Date(),
+                showOnFocus: true,
+                orientation: "auto top"
+            }); 
+        }
+        
+        // Sweetalert func
+        const didOpen = () => {
+            document.getElementById('startDate').removeAttribute("disabled"),
+            document.getElementById('endDate').removeAttribute("disabled")
+        }
+        
+        // Sweetalert func
+        const preConfirm = () => {
+            return [
+                document.getElementById('startDate').value,
+                document.getElementById('endDate').value
+            ]
+        }
+    
+        attention.custom({title: "Search Availability", html, callback, willOpen, didOpen, preConfirm})
     })
+
+</script>
 </script>
 {{end}}
