@@ -33,6 +33,22 @@ func main() {
 
 	// Defer the connection close
 	defer db.SQL.Close()
+	// Defer the mail channel
+	defer close(app.MailChan)
+
+	// Listens in the background
+	log.Println("Starting mail listener")
+	ListenForMail()
+
+	emailMsg := models.MailData{
+		From:    "john.do@gmail.com",
+		To:      "me@here.com",
+		Subject: "Test Email",
+		Content: "<h1>You got a mail.</h1><p>Check it out -></p>",
+	}
+
+	// Sending the emailMsg throught the app.MailChan (to share it with the go routine that deals with sending emails)
+	app.MailChan <- emailMsg
 
 	srv := http.Server{
 		Addr:    portNumber,
@@ -82,6 +98,10 @@ func run() (*driver.DB, error) {
 	app.Session = session
 	app.TemplateCache = tc
 	app.UseCache = false
+
+	// Creating a channel for mail data and assigning it to app.MailChan
+	mailChan := make(chan models.MailData)
+	app.MailChan = mailChan
 
 	// Connecting to database
 	db, err := driver.ConnectSQL("host=localhost port=5432 dbname=bookings user=postgres password=pass@3750")
