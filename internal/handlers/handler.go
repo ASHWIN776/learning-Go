@@ -196,10 +196,11 @@ func (rep *Repository) PostReservation(w http.ResponseWriter, r *http.Request) {
 	`, reservation.FirstName, reservation.StartDate.Format("2006-01-02"), reservation.EndDate.Format("2006-01-02"))
 
 	emailMsg := models.MailData{
-		From:    "john.do@gmail.com",
-		To:      reservation.Email,
-		Subject: "Booked! Reservation Confirmation",
-		Content: htmlMessage,
+		From:     "john.do@gmail.com",
+		To:       reservation.Email,
+		Subject:  "Booked! Reservation Confirmation",
+		Content:  htmlMessage,
+		Template: "basic.html",
 	}
 
 	// Sending the emailMsg throught the app.MailChan (to share it with the go routine that deals with sending emails)
@@ -214,10 +215,11 @@ func (rep *Repository) PostReservation(w http.ResponseWriter, r *http.Request) {
 	`, reservation.FirstName, reservation.StartDate.Format("2006-01-02"), reservation.EndDate.Format("2006-01-02"))
 
 	emailMsg = models.MailData{
-		From:    "john.do@gmail.com",
-		To:      "john.do@gmail.com",
-		Subject: "+1 Booking Notification",
-		Content: htmlMessage,
+		From:     "john.do@gmail.com",
+		To:       "john.do@gmail.com",
+		Subject:  "+1 Booking Notification",
+		Content:  htmlMessage,
+		Template: "basic.html",
 	}
 
 	rep.app.MailChan <- emailMsg
