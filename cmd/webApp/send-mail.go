@@ -2,8 +2,8 @@ package main
 
 import (
 	"fmt"
-	"io/ioutil"
 	"log"
+	"os"
 	"strings"
 	"time"
 
@@ -44,7 +44,7 @@ func sendMail(msg models.MailData) {
 		msgBody = msg.Content
 	} else {
 		// Get the file
-		data, err := ioutil.ReadFile(fmt.Sprintf("./email-templates/%s", msg.Template))
+		data, err := os.ReadFile(fmt.Sprintf("./email-templates/%s", msg.Template))
 		if err != nil {
 			log.Println("failed to read from file")
 		}
