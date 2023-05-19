@@ -3,6 +3,7 @@ package handlers
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
 	"log"
 	"net/http"
 	"strconv"
@@ -187,8 +188,26 @@ func (rep *Repository) PostReservation(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// Send notification email - first to guest
+	htmlMessage := fmt.Sprintf(`
+		<h1>Booking Confirmation</h1>
+		<p>Your booking from %s to %s is confirmed</p>
+	`, reservation.StartDate.Format("2006-01-02"), reservation.EndDate.Format("2006-01-02"))
+
+	emailMsg := models.MailData{
+		From:    "john.do@gmail.com",
+		To:      reservation.Email,
+		Subject: "Booked! Reservation Confirmation",
+		Content: htmlMessage,
+	}
+
+	// Sending the emailMsg throught the app.MailChan (to share it with the go routine that deals with sending emails)
+	rep.app.MailChan <- emailMsg
+
 	// Updating the session again
 	rep.app.Session.Put(r.Context(), "reservation", reservation)
+
+	// Redirecting to the Reservation Summary Page
 	http.Redirect(w, r, "/reservation-summary", http.StatusSeeOther)
 
 }

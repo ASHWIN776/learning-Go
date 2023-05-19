@@ -40,15 +40,15 @@ func main() {
 	log.Println("Starting mail listener")
 	ListenForMail()
 
-	emailMsg := models.MailData{
-		From:    "john.do@gmail.com",
-		To:      "me@here.com",
-		Subject: "Test Email",
-		Content: "<h1>You got a mail.</h1><p>Check it out -></p>",
-	}
+	// emailMsg := models.MailData{
+	// 	From:    "john.do@gmail.com",
+	// 	To:      "me@here.com",
+	// 	Subject: "Test Email",
+	// 	Content: "<h1>You got a mail.</h1><p>Check it out -></p>",
+	// }
 
-	// Sending the emailMsg throught the app.MailChan (to share it with the go routine that deals with sending emails)
-	app.MailChan <- emailMsg
+	// // Sending the emailMsg throught the app.MailChan (to share it with the go routine that deals with sending emails)
+	// app.MailChan <- emailMsg
 
 	srv := http.Server{
 		Addr:    portNumber,
