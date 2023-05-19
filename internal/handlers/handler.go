@@ -188,11 +188,12 @@ func (rep *Repository) PostReservation(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Send notification email - first to guest
+	// Send notification email - first to guest------------------
 	htmlMessage := fmt.Sprintf(`
 		<h1>Booking Confirmation</h1>
-		<p>Your booking from %s to %s is confirmed</p>
-	`, reservation.StartDate.Format("2006-01-02"), reservation.EndDate.Format("2006-01-02"))
+		<span>Hey %s</span><br>
+		<span>Your booking from %s to %s is confirmed</span>
+	`, reservation.FirstName, reservation.StartDate.Format("2006-01-02"), reservation.EndDate.Format("2006-01-02"))
 
 	emailMsg := models.MailData{
 		From:    "john.do@gmail.com",
@@ -203,6 +204,24 @@ func (rep *Repository) PostReservation(w http.ResponseWriter, r *http.Request) {
 
 	// Sending the emailMsg throught the app.MailChan (to share it with the go routine that deals with sending emails)
 	rep.app.MailChan <- emailMsg
+	// ----------------------------------------------------------
+
+	// Send notification email - to the property owner (john.do@gmail.com)
+	htmlMessage = fmt.Sprintf(`
+		<h1>Booking Notification</h1>
+		<span>Hey John</span><br>
+		<span>Booking added by %s from %s to %s.</span>
+	`, reservation.FirstName, reservation.StartDate.Format("2006-01-02"), reservation.EndDate.Format("2006-01-02"))
+
+	emailMsg = models.MailData{
+		From:    "john.do@gmail.com",
+		To:      "john.do@gmail.com",
+		Subject: "+1 Booking Notification",
+		Content: htmlMessage,
+	}
+
+	rep.app.MailChan <- emailMsg
+	// ----------------------------------------------------------
 
 	// Updating the session again
 	rep.app.Session.Put(r.Context(), "reservation", reservation)

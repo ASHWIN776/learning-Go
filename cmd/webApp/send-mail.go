@@ -11,9 +11,13 @@ import (
 func ListenForMail() {
 	// Runs infinitely
 	go func() {
-		msg := <-app.MailChan // This is how I will talk to this go routine from any other place in the project
-		sendMail(msg)
+		for {
+			msg := <-app.MailChan // This is how I will talk to this go routine from any other place in the project
+			log.Println("Got message from the channel, sending mail")
+			sendMail(msg)
+		}
 	}()
+
 }
 
 func sendMail(msg models.MailData) {
