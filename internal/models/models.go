@@ -1,6 +1,9 @@
 package models
 
-import "time"
+import (
+	"html/template"
+	"time"
+)
 
 // User model
 type User struct {
@@ -58,4 +61,12 @@ type Reservation struct {
 	CreatedAt time.Time
 	UpdatedAt time.Time
 	Room      Room // There is no necessity that I have to put the same amt of vars in these models as I do in the table
+}
+
+// holds an email message
+type MailData struct {
+	To      string
+	From    string
+	Subject string
+	Content template.HTML
 }
