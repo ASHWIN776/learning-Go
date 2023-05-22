@@ -35,6 +35,7 @@ func routes(app *config.AppConfig) http.Handler {
 
 	mux.Get("/login", http.HandlerFunc(handlers.Repo.ShowLogin))
 	mux.Post("/login", http.HandlerFunc(handlers.Repo.PostShowLogin))
+	mux.Get("/logout", http.HandlerFunc(handlers.Repo.Logout))
 
 	// Creates a fileserver by telling it where the static directory exists
 	fileServer := http.FileServer(http.Dir("./static/"))

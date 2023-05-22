@@ -499,3 +499,15 @@ func (rep *Repository) PostShowLogin(w http.ResponseWriter, r *http.Request) {
 	rep.app.Session.Put(r.Context(), "flash", "Logged In Successfully")
 	http.Redirect(w, r, "/", http.StatusSeeOther)
 }
+
+// logs a user out
+func (rep *Repository) Logout(w http.ResponseWriter, r *http.Request) {
+	// Destroy the session - Could have done the .Remove on the key(user_id), but who knows what all key i will add in the future which would contain the logged in user detail. I will have to write the .Remove for all of those keys
+	_ = rep.app.Session.Destroy(r.Context())
+
+	// Renew Token
+	_ = rep.app.Session.RenewToken(r.Context())
+
+	// Redirect to the home page
+	http.Redirect(w, r, "/", http.StatusSeeOther)
+}
