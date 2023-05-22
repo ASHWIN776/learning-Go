@@ -72,7 +72,7 @@ func BuildTemplateCache() (map[string]*template.Template, error) {
 	for _, page := range pages {
 		pageName := filepath.Base(page)
 		var parseErr error
-		tc[pageName], parseErr = template.ParseFiles(fmt.Sprintf("%s/%s", pathToTemplates, pageName), fmt.Sprintf("%s/base.layout.gohtml", pathToTemplates))
+		tc[pageName], parseErr = template.ParseFiles(fmt.Sprintf("%s/%s", pathToTemplates, pageName), fmt.Sprintf("%s/base.layout.gohtml", pathToTemplates), fmt.Sprintf("%s/admin.layout.gohtml", pathToTemplates))
 
 		if parseErr != nil {
 			log.Println("Parse Error: failed to parse ", pageName)

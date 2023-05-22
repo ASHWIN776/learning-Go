@@ -35,19 +35,19 @@
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
               <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                   <li class="nav-item">
-                  <a class="nav-link active" aria-current="page" href="/">Home</a>
+                    <a class="nav-link active" aria-current="page" href="/">Home</a>
                   </li>
                   <li class="nav-item">
-                  <a class="nav-link" href="/about">About</a>
+                    <a class="nav-link" href="/about">About</a>
                   </li>
                   <li class="nav-item dropdown">
-                  <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                      Rooms
-                  </a>
-                  <ul class="dropdown-menu">
-                      <li><a class="dropdown-item" href="/generals-quarters">General's Quarters</a></li>
-                      <li><a class="dropdown-item" href="/majors-suite">Major's Suite</a></li>
-                  </ul>
+                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        Rooms
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="/generals-quarters">General's Quarters</a></li>
+                        <li><a class="dropdown-item" href="/majors-suite">Major's Suite</a></li>
+                    </ul>
                   </li>
                   <li class="nav-item">
                   <a class="nav-link" href="/search-availability">Book Now</a>
@@ -57,7 +57,15 @@
                   </li>
                   <li class="nav-item">
                     {{if eq .IsAuthenticated 1}}
-                        <a class="nav-link" href="/logout">Logout</a>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                Admin
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="/admin/dashboard">Dashboard</a></li>
+                                <li><a class="dropdown-item" href="/logout">Logout</a></li>
+                            </ul>
+                          </li>
                     {{else}}
                         <a class="nav-link" href="/login">Login</a>
                     {{end}}
