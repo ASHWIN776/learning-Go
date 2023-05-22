@@ -37,6 +37,13 @@ func routes(app *config.AppConfig) http.Handler {
 	mux.Post("/login", http.HandlerFunc(handlers.Repo.PostShowLogin))
 	mux.Get("/logout", http.HandlerFunc(handlers.Repo.Logout))
 
+	// Any route that starts with /admin will be handled here
+	mux.Route("/admin", func(mux chi.Router) {
+		mux.Use(Auth)
+
+		mux.Get("/dashboard", http.HandlerFunc(handlers.Repo.AdminDashboard))
+	})
+
 	// Creates a fileserver by telling it where the static directory exists
 	fileServer := http.FileServer(http.Dir("./static/"))
 

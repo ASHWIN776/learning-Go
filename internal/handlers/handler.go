@@ -511,3 +511,8 @@ func (rep *Repository) Logout(w http.ResponseWriter, r *http.Request) {
 	// Redirect to the home page
 	http.Redirect(w, r, "/", http.StatusSeeOther)
 }
+
+func (rep *Repository) AdminDashboard(w http.ResponseWriter, r *http.Request) {
+
+	render.RenderTemplate(w, r, "admin-dashboard.page.gohtml", &models.TemplateData{})
+}
