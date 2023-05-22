@@ -17,31 +17,31 @@ func routes(app *config.AppConfig) http.Handler {
 	mux.Use(Nosurf)
 
 	// Routes
-	mux.Get("/", http.HandlerFunc(handlers.Repo.Home))
-	mux.Get("/about", http.HandlerFunc(handlers.Repo.About))
-	mux.Get("/contact", http.HandlerFunc(handlers.Repo.Contact))
-	mux.Get("/generals-quarters", http.HandlerFunc(handlers.Repo.GeneralsQuarters))
-	mux.Get("/majors-suite", http.HandlerFunc(handlers.Repo.MajorsSuite))
+	mux.Get("/", handlers.Repo.Home)
+	mux.Get("/about", handlers.Repo.About)
+	mux.Get("/contact", handlers.Repo.Contact)
+	mux.Get("/generals-quarters", handlers.Repo.GeneralsQuarters)
+	mux.Get("/majors-suite", handlers.Repo.MajorsSuite)
 
-	mux.Get("/make-reservation", http.HandlerFunc(handlers.Repo.MakeReservation))
-	mux.Post("/make-reservation", http.HandlerFunc(handlers.Repo.PostReservation))
-	mux.Get("/reservation-summary", http.HandlerFunc(handlers.Repo.ReservationSummary))
+	mux.Get("/make-reservation", handlers.Repo.MakeReservation)
+	mux.Post("/make-reservation", handlers.Repo.PostReservation)
+	mux.Get("/reservation-summary", handlers.Repo.ReservationSummary)
 
-	mux.Get("/search-availability", http.HandlerFunc(handlers.Repo.SearchAvailability))
-	mux.Post("/search-availability-json", http.HandlerFunc(handlers.Repo.AvailabilityJSON))
-	mux.Get("/book-room", http.HandlerFunc(handlers.Repo.BookRoom))
-	mux.Post("/search-availability", http.HandlerFunc(handlers.Repo.PostAvailability))
-	mux.Get("/choose-room/{id}", http.HandlerFunc(handlers.Repo.ChooseRoom))
+	mux.Get("/search-availability", handlers.Repo.SearchAvailability)
+	mux.Post("/search-availability-json", handlers.Repo.AvailabilityJSON)
+	mux.Get("/book-room", handlers.Repo.BookRoom)
+	mux.Post("/search-availability", handlers.Repo.PostAvailability)
+	mux.Get("/choose-room/{id}", handlers.Repo.ChooseRoom)
 
-	mux.Get("/login", http.HandlerFunc(handlers.Repo.ShowLogin))
-	mux.Post("/login", http.HandlerFunc(handlers.Repo.PostShowLogin))
-	mux.Get("/logout", http.HandlerFunc(handlers.Repo.Logout))
+	mux.Get("/login", handlers.Repo.ShowLogin)
+	mux.Post("/login", handlers.Repo.PostShowLogin)
+	mux.Get("/logout", handlers.Repo.Logout)
 
 	// Any route that starts with /admin will be handled here
 	mux.Route("/admin", func(mux chi.Router) {
 		mux.Use(Auth)
 
-		mux.Get("/dashboard", http.HandlerFunc(handlers.Repo.AdminDashboard))
+		mux.Get("/dashboard", handlers.Repo.AdminDashboard)
 	})
 
 	// Creates a fileserver by telling it where the static directory exists
