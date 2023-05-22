@@ -2,10 +2,12 @@ package dbrepo
 
 import (
 	"context"
+	"errors"
 	"log"
 	"time"
 
 	"github.com/ASHWIN776/learning-Go/internal/models"
+	"golang.org/x/crypto/bcrypt"
 )
 
 // To insert the form data from make-reservation form to the reservations table in the database
@@ -134,6 +136,7 @@ func (p *postgresDBRepo) SearchAvailabilityForAllRooms(startDate, endDate time.T
 	return allRooms, nil
 }
 
+// Returns a room type variable after searching one by Id
 func (p *postgresDBRepo) GetRoomById(id int) (models.Room, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 
@@ -156,4 +159,101 @@ func (p *postgresDBRepo) GetRoomById(id int) (models.Room, error) {
 	}
 
 	return room, nil
+}
+
+// Returns a user type variable after searching one by Id
+func (p *postgresDBRepo) GetUserById(id int) (models.User, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+
+	defer cancel()
+
+	stmt := `
+		select * 
+		from 
+			users
+		where 
+			id = $1
+	`
+
+	row := p.DB.QueryRowContext(ctx, stmt, id)
+
+	var foundUser models.User
+	err := row.Scan(
+		&foundUser.ID,
+		&foundUser.FirstName,
+		&foundUser.LastName,
+		&foundUser.Email,
+		&foundUser.Password,
+		&foundUser.CreatedAt,
+		&foundUser.UpdatedAt,
+		&foundUser.AccessLevel,
+	)
+
+	if err != nil {
+		return foundUser, err
+	}
+
+	return foundUser, nil
+}
+
+// Updates a user in the database
+func (p *postgresDBRepo) UpdateUser(u models.User) error {
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+
+	defer cancel()
+
+	stmt := `
+		Update users
+		set 
+			first_name = $1
+			last_name = $2
+			email = $3
+			access_level = $4
+			updated_at = $5
+		where 
+			id = $6
+	`
+
+	_, err := p.DB.ExecContext(ctx, stmt, u.FirstName, u.LastName, u.Email, u.AccessLevel, time.Now(), u.ID)
+
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// Will check the creds entered by the user and returns the user id, hashed password if the creds are correct
+func (p *postgresDBRepo) Authenticate(enteredEmail, enteredPass string) (int, string, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+
+	defer cancel()
+
+	// Get the user from the database using the email(unique)
+	var id int
+	var hashedPass string
+
+	stmt := `
+		select id, password
+		from users
+		where 
+			email = $1
+	`
+
+	row := p.DB.QueryRowContext(ctx, stmt, enteredEmail)
+	err := row.Scan(&id, &hashedPass)
+	if err != nil {
+		return -1, "", err
+	}
+
+	// Compare the password hash in the db and the one given by the user
+	err = bcrypt.CompareHashAndPassword([]byte(hashedPass), []byte(enteredPass))
+	if err == bcrypt.ErrMismatchedHashAndPassword {
+		return -1, "", errors.New("incorrect password")
+	} else if err != nil {
+		return -1, "", err
+	}
+
+	// if it gets here, then password entered is correct
+	return id, hashedPass, nil
 }
