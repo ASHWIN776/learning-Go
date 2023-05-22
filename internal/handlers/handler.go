@@ -447,3 +447,54 @@ func (rep *Repository) ShowLogin(w http.ResponseWriter, r *http.Request) {
 		Form: forms.New(nil),
 	})
 }
+
+// Handler associated with logging the user in
+func (rep *Repository) PostShowLogin(w http.ResponseWriter, r *http.Request) {
+	// Renew Session Token to prevent Session Fixation Attack
+
+	// Get the values from the form
+	err := r.ParseForm()
+	if err != nil {
+		helpers.ServerError(w, errors.New("cannot parse the form"))
+	}
+
+	// Server Side Validation ---------------------------------------------
+	form := forms.New(r.PostForm)
+	form.Required("email", "password")
+	form.IsEmail("email")
+	form.MinLength("password", 8)
+
+	isValid := form.IsValid()
+
+	if !isValid {
+		var data = make(map[string]interface{})
+		data["email"] = r.Form.Get("email")
+
+		render.RenderTemplate(w, r, "login.page.gohtml", &models.TemplateData{
+			Form: form,
+			Data: data,
+		})
+
+		return
+	}
+	// --------------------------------------------------------------------
+
+	// Authenticate the creds entered
+	enteredEmail := r.Form.Get("email")
+	enteredPass := r.Form.Get("password")
+	userId, _, err := rep.DB.Authenticate(enteredEmail, enteredPass)
+	if err != nil {
+		rep.app.ErrorLog.Println(err)
+
+		// Put an error message in the session for the alert, and redirect back to the login page
+		rep.app.Session.Put(r.Context(), "error", "Login failed: Invalid user credentials")
+		http.Redirect(w, r, "/login", http.StatusSeeOther)
+	}
+
+	// Put the user id in the session
+	rep.app.Session.Put(r.Context(), "user_id", userId)
+
+	// Redirect to the home, with the success alert
+	rep.app.Session.Put(r.Context(), "flash", "Logged In Successfully")
+	http.Redirect(w, r, "/", http.StatusSeeOther)
+}

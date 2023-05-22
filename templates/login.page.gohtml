@@ -12,6 +12,9 @@
         <h1 class="text-center">Login</h1>
     </div>
     <form class="mt-4" action="/login" method="post" novalidate>       
+        <!-- Hidden Inputs -->
+        <input type="hidden" name="csrf_token" value="{{.CSRFToken}}">
+
         <div class="mb-3">
           <label for="emailInput" class="form-label">Email</label>
           
@@ -19,7 +22,7 @@
             <label for="" class="text-danger">{{.}}</label>
           {{end}}
           
-          <input type="email" name="email" class="form-control {{with .Form.Errors.Get "email"}} is-invalid {{end}}" id="emailInput" aria-describedby="emailHelp">
+          <input type="email" name="email" class="form-control {{with .Form.Errors.Get "email"}} is-invalid {{end}}" id="emailInput" aria-describedby="emailHelp" value="{{.Data.email}}">
         </div>
         <div class="mb-3">
           <label for="passwordInput" class="form-label">Password</label>
