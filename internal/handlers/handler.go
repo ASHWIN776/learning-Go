@@ -489,6 +489,7 @@ func (rep *Repository) PostShowLogin(w http.ResponseWriter, r *http.Request) {
 		// Put an error message in the session for the alert, and redirect back to the login page
 		rep.app.Session.Put(r.Context(), "error", "Login failed: Invalid user credentials")
 		http.Redirect(w, r, "/login", http.StatusSeeOther)
+		return
 	}
 
 	// Put the user id in the session
