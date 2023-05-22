@@ -33,6 +33,8 @@ func routes(app *config.AppConfig) http.Handler {
 	mux.Post("/search-availability", http.HandlerFunc(handlers.Repo.PostAvailability))
 	mux.Get("/choose-room/{id}", http.HandlerFunc(handlers.Repo.ChooseRoom))
 
+	mux.Get("/login", http.HandlerFunc(handlers.Repo.ShowLogin))
+
 	// Creates a fileserver by telling it where the static directory exists
 	fileServer := http.FileServer(http.Dir("./static/"))
 

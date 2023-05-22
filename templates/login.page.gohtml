@@ -1,0 +1,43 @@
+{{template "base" .}}
+
+<!-- For own css -->
+{{define "css"}}
+
+{{end}}
+
+
+{{define "content"}}
+<div class="container">
+    <div class="row mt-3">
+        <h1 class="text-center">Login</h1>
+    </div>
+    <form class="mt-4" action="/login" method="post" novalidate>       
+        <div class="mb-3">
+          <label for="emailInput" class="form-label">Email</label>
+          
+          {{with .Form.Errors.Get "email"}} 
+            <label for="" class="text-danger">{{.}}</label>
+          {{end}}
+          
+          <input type="email" name="email" class="form-control {{with .Form.Errors.Get "email"}} is-invalid {{end}}" id="emailInput" aria-describedby="emailHelp">
+        </div>
+        <div class="mb-3">
+          <label for="passwordInput" class="form-label">Password</label>
+          
+          {{with .Form.Errors.Get "password"}} 
+            <label for="" class="text-danger">{{.}}</label>
+          {{end}}
+          
+          <input type="password" name="password" class="form-control {{with .Form.Errors.Get "password"}} is-invalid {{end}}" id="passwordInput" aria-describedby="passwordHelp">
+        </div>
+
+        <input type="submit" class="btn btn-primary" value="Login">
+    </form>
+</div>
+
+{{end}}
+
+<!-- For own js -->
+{{define "js"}}
+    
+{{end}}
