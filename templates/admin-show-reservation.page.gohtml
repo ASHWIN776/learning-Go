@@ -61,11 +61,20 @@
           <label for="phInput" class="form-label">Phone Number</label>
           <input type="text" name="phoneNumber" value="{{$reservation.Phone}}" class="form-control" id="phInput" aria-describedby="phInputHelp">
         </div>
-        <button type="submit" class="btn btn-primary">Submit</button>
-        <a href="/admin/reservations-{{.StringMap.src}}" class="btn btn-warning">Cancel</a>
-        {{if eq $reservation.Processed 0}}
-          <button type="button" class="btn btn-info" id="processBtn" onclick="processRes()">Mark As Processed</button>
-        {{end}}
+          
+          <div class="row justify-content-between">
+            <div class="col-lg-6">
+              <button type="submit" class="btn btn-primary">Submit</button>
+              <a href="/admin/reservations-{{.StringMap.src}}" class="btn btn-warning">Cancel</a>
+              
+              {{if eq $reservation.Processed 0}}
+                <button type="button" class="btn btn-info" id="processBtn" onclick="processRes()">Mark As Processed</button>
+              {{end}}
+            </div>
+            <div class="col-lg-2">
+              <button type="button" class="btn btn-danger" onclick="deleteRes()">Delete Reservation</button>
+            </div>
+          </div>
       </form>
     </div>
 
@@ -80,6 +89,17 @@
           title: "Are you sure",
           callback: () => {
             window.location.href = "/admin/process-reservation/{{.StringMap.src}}/{{.Data.reservation.ID}}"
+          }
+        })
+      }
+
+      function deleteRes(){
+        attention.custom({
+          icon: "warning",
+          title: "Are you sure?",
+          html: "Agreeing to this will delete this reservation!",
+          callback: () => {
+            window.location.href = "/admin/delete-reservation/{{.StringMap.src}}/{{.Data.reservation.ID}}"
           }
         })
       }

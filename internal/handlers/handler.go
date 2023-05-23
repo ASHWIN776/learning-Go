@@ -624,6 +624,7 @@ func (rep *Repository) PostAdminShowReservation(w http.ResponseWriter, r *http.R
 	http.Redirect(w, r, "/admin/reservations-"+pageSrc, http.StatusSeeOther)
 }
 
+// Processes the given reservation
 func (rep *Repository) AdminProcessReservation(w http.ResponseWriter, r *http.Request) {
 	pageSrc := chi.URLParam(r, "src")
 	reservationId, err := strconv.Atoi(chi.URLParam(r, "reservation_id"))
@@ -641,6 +642,29 @@ func (rep *Repository) AdminProcessReservation(w http.ResponseWriter, r *http.Re
 
 	// add the flash message in the session too
 	rep.app.Session.Put(r.Context(), "flash", fmt.Sprintf("Processed Reservation ID %d successfully", reservationId))
+
+	// Redirect the user back to the src page
+	http.Redirect(w, r, "/admin/reservations-"+pageSrc, http.StatusSeeOther)
+}
+
+// Delete the reservation
+func (rep *Repository) AdminDeleteReservation(w http.ResponseWriter, r *http.Request) {
+	pageSrc := chi.URLParam(r, "src")
+	reservationId, err := strconv.Atoi(chi.URLParam(r, "reservation_id"))
+	if err != nil {
+		helpers.ServerError(w, err)
+		return
+	}
+
+	// Update the processed value in the reservation table row for the particular reservationId
+	err = rep.DB.DeleteReservation(reservationId)
+	if err != nil {
+		helpers.ServerError(w, err)
+		return
+	}
+
+	// add the flash message in the session too
+	rep.app.Session.Put(r.Context(), "flash", fmt.Sprintf("Deleted Reservation ID %d successfully", reservationId))
 
 	// Redirect the user back to the src page
 	http.Redirect(w, r, "/admin/reservations-"+pageSrc, http.StatusSeeOther)
