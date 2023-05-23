@@ -68,15 +68,37 @@ func BuildTemplateCache() (map[string]*template.Template, error) {
 		return nil, errors.New("cannot build cache")
 	}
 
+	// Find out all the pages ending with layout.gohtml in the template directory
+	layoutPages, pageErr := filepath.Glob(fmt.Sprintf("%s/*.layout.gohtml", pathToTemplates))
+	if pageErr != nil {
+		log.Println("cannot find layout file in the specified path")
+		return nil, errors.New("cannot build cache")
+	}
+
 	// Populate the cache
 	for _, page := range pages {
 		pageName := filepath.Base(page)
 		var parseErr error
-		tc[pageName], parseErr = template.ParseFiles(fmt.Sprintf("%s/%s", pathToTemplates, pageName), fmt.Sprintf("%s/base.layout.gohtml", pathToTemplates), fmt.Sprintf("%s/admin.layout.gohtml", pathToTemplates))
+
+		// parse the individual file
+		cache, parseErr := template.ParseFiles(fmt.Sprintf("%s/%s", pathToTemplates, pageName))
 
 		if parseErr != nil {
 			log.Println("Parse Error: failed to parse ", pageName)
+			return nil, parseErr
 		}
+
+		// parse the layout files too
+		if len(layoutPages) > 0 {
+			cache, parseErr = cache.ParseGlob(fmt.Sprintf("%s/*.layout.gohtml", pathToTemplates))
+			if parseErr != nil {
+				log.Println("Parse Error: failed to parse ", pageName)
+				return nil, parseErr
+			}
+		}
+
+		// Put the cache in tc
+		tc[pageName] = cache
 	}
 
 	// Return the cache
