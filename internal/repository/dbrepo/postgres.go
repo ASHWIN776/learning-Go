@@ -437,9 +437,9 @@ func (p *postgresDBRepo) UpdateReservation(res models.Reservation) error {
 			last_name = $2,
 			email = $3,
 			phone = $4,
-			updated_at = $7,
+			updated_at = $5
 		where
-			id = $8
+			id = $6
 	`
 
 	response, err := p.DB.ExecContext(ctx, stmt,
@@ -447,8 +447,6 @@ func (p *postgresDBRepo) UpdateReservation(res models.Reservation) error {
 		res.LastName,
 		res.Email,
 		res.Phone,
-		res.StartDate,
-		res.EndDate,
 		time.Now(),
 		res.ID,
 	)

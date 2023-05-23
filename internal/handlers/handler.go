@@ -551,7 +551,6 @@ func (rep *Repository) AdminAllReservations(w http.ResponseWriter, r *http.Reque
 
 func (rep *Repository) AdminShowReservation(w http.ResponseWriter, r *http.Request) {
 	pageSrc := chi.URLParam(r, "src")
-	log.Println("Came from" + pageSrc)
 	reservationId, err := strconv.Atoi(chi.URLParam(r, "reservation_id"))
 	if err != nil {
 		helpers.ServerError(w, err)
@@ -574,6 +573,55 @@ func (rep *Repository) AdminShowReservation(w http.ResponseWriter, r *http.Reque
 		StringMap: stringMap,
 		Form:      forms.New(nil),
 	})
+}
+
+func (rep *Repository) PostAdminShowReservation(w http.ResponseWriter, r *http.Request) {
+	pageSrc := chi.URLParam(r, "src")
+	reservationId, err := strconv.Atoi(chi.URLParam(r, "reservation_id"))
+	if err != nil {
+		helpers.ServerError(w, err)
+		return
+	}
+
+	err = r.ParseForm()
+	if err != nil {
+		helpers.ServerError(w, err)
+		return
+	}
+
+	// Get the old reservation using the reservationId
+	oldReservation, err := rep.DB.GetReservationById(reservationId)
+	if err != nil {
+		helpers.ServerError(w, err)
+		return
+	}
+
+	// Server Side validation
+	form := forms.New(r.PostForm)
+
+	form.Required("firstName", "lastName", "email")
+	form.IsEmail("email")
+
+	if !form.IsValid() {
+		http.Redirect(w, r, r.RequestURI, http.StatusSeeOther)
+		return
+	}
+
+	// Update oldReservation with values submitted from the form
+	oldReservation.FirstName = r.Form.Get("firstName")
+	oldReservation.LastName = r.Form.Get("lastName")
+	oldReservation.Email = r.Form.Get("email")
+	oldReservation.Phone = r.Form.Get("phoneNumber")
+
+	// Update the reservations table
+	err = rep.DB.UpdateReservation(oldReservation) // oldReservation contains the new reservation values
+	if err != nil {
+		helpers.ServerError(w, err)
+		return
+	}
+
+	rep.app.Session.Put(r.Context(), "flash", fmt.Sprintf("Reservation ID: %d Updated Successfully", oldReservation.ID))
+	http.Redirect(w, r, "/admin/reservations-"+pageSrc, http.StatusSeeOther)
 }
 
 func (rep *Repository) AdminReservationsCalendar(w http.ResponseWriter, r *http.Request) {

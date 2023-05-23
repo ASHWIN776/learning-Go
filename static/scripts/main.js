@@ -84,6 +84,7 @@ function Prompt(){
 // Notie alert
 function notieAlert(type, msg)
 {
+    console.log("Calling notie")
     notie.alert({
     type: type,
     text: msg,

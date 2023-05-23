@@ -15,8 +15,16 @@
         <!-- End plugin css for this page -->
         <!-- inject:css -->
         <link rel="stylesheet" href="/static/admin/css/style.css">
+        <!-- notie -->
+        <link rel="stylesheet" type="text/css" href="https://unpkg.com/notie/dist/notie.min.css">
         <!-- endinject -->
         <link rel="shortcut icon" href="/static/admin/images/favicon.png"/>
+
+        <style>
+            .notie-container{
+                z-index: 10000;
+            }
+        </style>
 
         {{block "css" . }}
 
@@ -131,9 +139,36 @@
     <script src="/static/admin/js/template.js"></script>
     <script src="/static/admin/js/todolist.js"></script>
     <!-- endinject -->
+    <!-- notie -->
+    <script src="https://unpkg.com/notie"></script>
+    <!-- Sweetalert -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <!-- Custom js for this page-->
     <script src="/static/admin/js/dashboard.js"></script>
     <!-- End custom js for this page-->
+    <!-- External JS available to all the pages -->
+    <script src="/static/scripts/main.js"></script>
+
+    <script>
+        const error = "{{.Error}}"
+        const flash = "{{.Flash}}"
+        const warning = "{{.Warning}}"
+
+        console.log(flash)
+
+        if(error){
+            notieAlert("error", error)
+        }
+
+        else if(flash){
+            notieAlert("success", flash)
+        }
+
+        else if(warning){
+            notieAlert("warning", warning)
+        }
+
+    </script>
 
     {{block "js" . }}
 

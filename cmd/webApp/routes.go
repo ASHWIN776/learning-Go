@@ -46,7 +46,8 @@ func routes(app *config.AppConfig) http.Handler {
 		mux.Get("/reservations-all", handlers.Repo.AdminAllReservations)
 		mux.Get("/reservations-calendar", handlers.Repo.AdminReservationsCalendar)
 
-		mux.Get("/reservations/{src}/{reservation_id}", handlers.Repo.AdminShowReservation) // src can be "all" or "new"
+		mux.Get("/reservations/{src}/{reservation_id}", handlers.Repo.AdminShowReservation)      // src can be "all" or "new"
+		mux.Post("/reservations/{src}/{reservation_id}", handlers.Repo.PostAdminShowReservation) // src can be "all" or "new"
 	})
 
 	// Creates a fileserver by telling it where the static directory exists
