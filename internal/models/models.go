@@ -59,6 +59,7 @@ type Reservation struct {
 	RoomID    int
 	CreatedAt time.Time
 	UpdatedAt time.Time
+	Processed int
 	Room      Room // There is no necessity that I have to put the same amt of vars in these models as I do in the table
 }
 

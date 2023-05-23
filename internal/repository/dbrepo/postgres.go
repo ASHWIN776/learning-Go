@@ -316,3 +316,65 @@ func (p *postgresDBRepo) AllReservations() ([]models.Reservation, error) {
 
 	return reservations, nil
 }
+
+// Returns the list of reservations which are not processed(processed = 0)
+func (p *postgresDBRepo) NewReservations() ([]models.Reservation, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+
+	defer cancel()
+
+	stmt := `
+		select r.*, rm.* 
+		from 
+			reservations r 
+			left join rooms rm
+		on
+			(r.room_id = rm.id)
+		where 
+			r.processed = 0
+		order by
+			r.start_date asc
+	`
+
+	rows, err := p.DB.QueryContext(ctx, stmt)
+	if err != nil {
+		return nil, err
+	}
+
+	defer rows.Close()
+
+	var reservations []models.Reservation
+
+	for rows.Next() {
+		var res models.Reservation
+		err := rows.Scan(
+			&res.ID, // reservation info
+			&res.FirstName,
+			&res.LastName,
+			&res.Email,
+			&res.Phone,
+			&res.StartDate,
+			&res.EndDate,
+			&res.RoomID,
+			&res.CreatedAt,
+			&res.UpdatedAt,
+			&res.Processed,
+			&res.Room.ID, // start getting the room info
+			&res.Room.RoomName,
+			&res.Room.CreatedAt,
+			&res.Room.UpdatedAt,
+		)
+		if err != nil {
+			return nil, err
+		}
+
+		reservations = append(reservations, res)
+	}
+
+	// Catching any errors during iteration
+	if rows.Err() != nil {
+		return nil, err
+	}
+
+	return reservations, nil
+}

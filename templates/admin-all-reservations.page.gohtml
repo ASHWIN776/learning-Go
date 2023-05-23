@@ -21,9 +21,10 @@
                     <th>Last Name</th>
                     <th>Email</th>
                     <th>Phone</th>
+                    <th>Room Name</th>
+                    <th>Processed</th>
                     <th>Start Date</th>
                     <th>End Date</th>
-                    <th>Room Name</th>
                 </tr>
             </thead>
             <tbody>
@@ -38,9 +39,10 @@
                         </td>
                         <td>{{.Email}}</td>
                         <td>{{.Phone}}</td>
+                        <td>{{.Room.RoomName}}</td>
+                        <td>{{.Processed}}</td>
                         <td>{{humanDate .StartDate}}</td>
                         <td>{{humanDate .EndDate}}</td>
-                        <td>{{.Room.RoomName}}</td>
                     </tr>
                 {{end}}
             </tbody>
