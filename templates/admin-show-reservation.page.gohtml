@@ -63,7 +63,26 @@
         </div>
         <button type="submit" class="btn btn-primary">Submit</button>
         <a href="/admin/reservations-{{.StringMap.src}}" class="btn btn-warning">Cancel</a>
+        {{if eq $reservation.Processed 0}}
+          <button type="button" class="btn btn-info" id="processBtn" onclick="processRes()">Mark As Processed</button>
+        {{end}}
       </form>
     </div>
+
+{{end}}
+
+
+{{define "js"}}
+    <script>
+      function processRes(){
+        attention.custom({
+          icon: "warning",
+          title: "Are you sure",
+          callback: () => {
+            window.location.href = "/admin/process-reservation/{{.StringMap.src}}/{{.Data.reservation.ID}}"
+          }
+        })
+      }
+    </script>
 
 {{end}}

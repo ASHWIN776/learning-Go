@@ -624,6 +624,28 @@ func (rep *Repository) PostAdminShowReservation(w http.ResponseWriter, r *http.R
 	http.Redirect(w, r, "/admin/reservations-"+pageSrc, http.StatusSeeOther)
 }
 
+func (rep *Repository) AdminProcessReservation(w http.ResponseWriter, r *http.Request) {
+	pageSrc := chi.URLParam(r, "src")
+	reservationId, err := strconv.Atoi(chi.URLParam(r, "reservation_id"))
+	if err != nil {
+		helpers.ServerError(w, err)
+		return
+	}
+
+	// Update the processed value in the reservation table row for the particular reservationId
+	err = rep.DB.UpdateProcessedForReservation(reservationId, 1)
+	if err != nil {
+		helpers.ServerError(w, err)
+		return
+	}
+
+	// add the flash message in the session too
+	rep.app.Session.Put(r.Context(), "flash", fmt.Sprintf("Processed Reservation ID %d successfully", reservationId))
+
+	// Redirect the user back to the src page
+	http.Redirect(w, r, "/admin/reservations-"+pageSrc, http.StatusSeeOther)
+}
+
 func (rep *Repository) AdminReservationsCalendar(w http.ResponseWriter, r *http.Request) {
 
 	render.RenderTemplate(w, r, "admin-reservations-calendar.page.gohtml", &models.TemplateData{})
