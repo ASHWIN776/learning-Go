@@ -517,6 +517,7 @@ func (rep *Repository) AdminDashboard(w http.ResponseWriter, r *http.Request) {
 	render.RenderTemplate(w, r, "admin-dashboard.page.gohtml", &models.TemplateData{})
 }
 
+// Shows all the new reservations in the database(the ones that are not processed)
 func (rep *Repository) AdminNewReservations(w http.ResponseWriter, r *http.Request) {
 
 	newReservations, err := rep.DB.NewReservations()
@@ -532,6 +533,7 @@ func (rep *Repository) AdminNewReservations(w http.ResponseWriter, r *http.Reque
 	})
 }
 
+// Shows all the reservations in the database
 func (rep *Repository) AdminAllReservations(w http.ResponseWriter, r *http.Request) {
 
 	allReservations, err := rep.DB.AllReservations()
@@ -544,6 +546,33 @@ func (rep *Repository) AdminAllReservations(w http.ResponseWriter, r *http.Reque
 
 	render.RenderTemplate(w, r, "admin-all-reservations.page.gohtml", &models.TemplateData{
 		Data: data,
+	})
+}
+
+func (rep *Repository) AdminShowReservation(w http.ResponseWriter, r *http.Request) {
+	pageSrc := chi.URLParam(r, "src")
+	log.Println("Came from" + pageSrc)
+	reservationId, err := strconv.Atoi(chi.URLParam(r, "reservation_id"))
+	if err != nil {
+		helpers.ServerError(w, err)
+		return
+	}
+	reservation, err := rep.DB.GetReservationById(reservationId)
+	if err != nil {
+		helpers.ServerError(w, err)
+		return
+	}
+
+	data := make(map[string]interface{})
+	data["reservation"] = reservation
+
+	stringMap := make(map[string]string)
+	stringMap["src"] = pageSrc
+
+	render.RenderTemplate(w, r, "admin-show-reservation.page.gohtml", &models.TemplateData{
+		Data:      data,
+		StringMap: stringMap,
+		Form:      forms.New(nil),
 	})
 }
 

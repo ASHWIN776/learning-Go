@@ -1,0 +1,69 @@
+{{template "admin" .}}
+
+{{define "page-title"}}
+    Reservation
+{{end}}
+
+{{define "content"}}
+    {{$reservation := .Data.reservation}}
+    <div class="col-md-12">
+      <p class="fw-bold">Reservation Details</p>
+      <p>Room Name: {{$reservation.Room.RoomName}}</p>
+      
+      <!-- Make Reservation form -->
+      <form class="mt-4" action="/admin/reservations/{{.StringMap.src}}/{{$reservation.ID}}" method="post" novalidate>
+        <!-- Hidden Inputs -->
+        <input type="hidden" name="csrf_token" value="{{.CSRFToken}}">
+
+        <!--! First Name input group -->
+        <div class="mb-3">
+          <label for="firstNameInput" class="form-label">First Name</label>
+          
+          {{with .Form.Errors.Get "firstName"}} 
+            <label for="" class="text-danger">{{.}}</label>
+          {{end}}
+          
+          <input type="text" name="firstName" class="form-control {{with .Form.Errors.Get "firstName"}} is-invalid {{end}}" value="{{$reservation.FirstName}}" id="firstNameInput" aria-describedby="firstNameHelp">
+        </div>
+        <!--! Last Name input group -->
+        <div class="mb-3">
+          <label for="lastNameInput" class="form-label">Last Name</label>
+          
+          {{with .Form.Errors.Get "lastName"}} 
+            <label for="" class="text-danger">{{.}}</label>
+          {{end}}
+          
+          <input type="text" name="lastName" class="form-control {{with .Form.Errors.Get "lastName"}} is-invalid {{end}}" value="{{$reservation.LastName}}" id="lastNameInput" aria-describedby="lastNameHelp">
+        </div>
+        <!-- ! Start Date Input -->
+        <div class="mb-3">
+          <label for="startDateInput" class="form-label">Start Date</label>
+          <input type="text" class="form-control" id="startDateInput" aria-describedby="startDateHelp" value="{{humanDate $reservation.StartDate}}" disabled>
+        </div>
+        <!-- ! End Date Input -->
+        <div class="mb-3">
+          <label for="endDateInput" class="form-label">End Date</label>
+          <input type="text" class="form-control" id="endDateInput" aria-describedby="startDateHelp" value="{{humanDate $reservation.EndDate}}" disabled>
+        </div>
+        <input type="hidden" name="roomId" value="2">
+        <!-- ! Email input group -->
+        <div class="mb-3">
+          <label for="emailInput" class="form-label">Email</label>
+
+          {{with .Form.Errors.Get "email"}} 
+            <label for="" class="text-danger">{{.}}</label>
+          {{end}}
+
+          <input type="email" name="email" class="form-control {{with .Form.Errors.Get "email"}} is-invalid {{end}}" value="{{$reservation.Email}}" id="emailInput" aria-describedby="emailHelp">
+        </div>
+        <!--! Phone Number input group -->
+        <div class="mb-3">
+          <label for="phInput" class="form-label">Phone Number</label>
+          <input type="text" name="phoneNumber" value="{{$reservation.Phone}}" class="form-control" id="phInput" aria-describedby="phInputHelp">
+        </div>
+        <button type="submit" class="btn btn-primary">Submit</button>
+        <a href="/admin/reservations-{{.StringMap.src}}" class="btn btn-warning">Cancel</a>
+      </form>
+    </div>
+
+{{end}}
