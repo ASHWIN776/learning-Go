@@ -524,7 +524,17 @@ func (rep *Repository) AdminNewReservations(w http.ResponseWriter, r *http.Reque
 
 func (rep *Repository) AdminAllReservations(w http.ResponseWriter, r *http.Request) {
 
-	render.RenderTemplate(w, r, "admin-all-reservations.page.gohtml", &models.TemplateData{})
+	allReservations, err := rep.DB.AllReservations()
+	if err != nil {
+		helpers.ServerError(w, err)
+		return
+	}
+	data := make(map[string]interface{})
+	data["allReservations"] = allReservations
+
+	render.RenderTemplate(w, r, "admin-all-reservations.page.gohtml", &models.TemplateData{
+		Data: data,
+	})
 }
 
 func (rep *Repository) AdminReservationsCalendar(w http.ResponseWriter, r *http.Request) {
