@@ -7,14 +7,24 @@ import (
 	"log"
 	"net/http"
 	"path/filepath"
+	"time"
 
 	"github.com/ASHWIN776/learning-Go/internal/config"
 	"github.com/ASHWIN776/learning-Go/internal/models"
 	"github.com/justinas/nosurf"
 )
 
+// to pass functions to the templates
+var functions = template.FuncMap{
+	"humanDate": HumanDate,
+}
+
 var app *config.AppConfig
 var pathToTemplates = "./templates"
+
+func HumanDate(t time.Time) string {
+	return t.Format("2006-01-02")
+}
 
 // Gets the pointer to the app config created in main.go, and assigns it to the pointer of the same type created here
 func GetConfig(a *config.AppConfig) {
@@ -81,7 +91,7 @@ func BuildTemplateCache() (map[string]*template.Template, error) {
 		var parseErr error
 
 		// parse the individual file
-		cache, parseErr := template.ParseFiles(fmt.Sprintf("%s/%s", pathToTemplates, pageName))
+		cache, parseErr := template.New(pageName).Funcs(functions).ParseFiles(fmt.Sprintf("%s/%s", pathToTemplates, pageName))
 
 		if parseErr != nil {
 			log.Println("Parse Error: failed to parse ", pageName)

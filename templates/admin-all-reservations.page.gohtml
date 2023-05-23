@@ -34,8 +34,8 @@
                         <td>{{.LastName}}</td>
                         <td>{{.Email}}</td>
                         <td>{{.Phone}}</td>
-                        <td>{{.StartDate}}</td>
-                        <td>{{.EndDate}}</td>
+                        <td>{{humanDate .StartDate}}</td>
+                        <td>{{humanDate .EndDate}}</td>
                         <td>{{.Room.RoomName}}</td>
                     </tr>
                 {{end}}
