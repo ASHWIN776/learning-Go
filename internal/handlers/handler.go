@@ -516,3 +516,18 @@ func (rep *Repository) AdminDashboard(w http.ResponseWriter, r *http.Request) {
 
 	render.RenderTemplate(w, r, "admin-dashboard.page.gohtml", &models.TemplateData{})
 }
+
+func (rep *Repository) AdminNewReservations(w http.ResponseWriter, r *http.Request) {
+
+	render.RenderTemplate(w, r, "admin-new-reservations.page.gohtml", &models.TemplateData{})
+}
+
+func (rep *Repository) AdminAllReservations(w http.ResponseWriter, r *http.Request) {
+
+	render.RenderTemplate(w, r, "admin-all-reservations.page.gohtml", &models.TemplateData{})
+}
+
+func (rep *Repository) AdminReservationsCalendar(w http.ResponseWriter, r *http.Request) {
+
+	render.RenderTemplate(w, r, "admin-reservations-calendar.page.gohtml", &models.TemplateData{})
+}
