@@ -16,7 +16,9 @@ import (
 
 // to pass functions to the templates
 var functions = template.FuncMap{
-	"humanDate": HumanDate,
+	"humanDate":   HumanDate,
+	"formatDate":  FormatDate,
+	"returnSlice": ReturnSlice,
 }
 
 var app *config.AppConfig
@@ -24,6 +26,20 @@ var pathToTemplates = "./templates"
 
 func HumanDate(t time.Time) string {
 	return t.Format("2006-01-02")
+}
+
+func FormatDate(t time.Time, f string) string {
+	return t.Format(f)
+}
+
+func ReturnSlice(count int) []int {
+	var s []int
+
+	for i := 1; i <= count; i++ {
+		s = append(s, i)
+	}
+
+	return s
 }
 
 // Gets the pointer to the app config created in main.go, and assigns it to the pointer of the same type created here

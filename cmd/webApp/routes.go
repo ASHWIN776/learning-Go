@@ -39,7 +39,7 @@ func routes(app *config.AppConfig) http.Handler {
 
 	// Any route that starts with /admin will be handled here
 	mux.Route("/admin", func(mux chi.Router) {
-		mux.Use(Auth)
+		// mux.Use(Auth) -- will turn it back on after devpt
 
 		mux.Get("/dashboard", handlers.Repo.AdminDashboard)
 		mux.Get("/reservations-new", handlers.Repo.AdminNewReservations)

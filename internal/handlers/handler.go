@@ -549,6 +549,7 @@ func (rep *Repository) AdminAllReservations(w http.ResponseWriter, r *http.Reque
 	})
 }
 
+// Shows more of one reservation
 func (rep *Repository) AdminShowReservation(w http.ResponseWriter, r *http.Request) {
 	pageSrc := chi.URLParam(r, "src")
 	reservationId, err := strconv.Atoi(chi.URLParam(r, "reservation_id"))
@@ -575,6 +576,7 @@ func (rep *Repository) AdminShowReservation(w http.ResponseWriter, r *http.Reque
 	})
 }
 
+// Processes the form values when saved(show reservation)
 func (rep *Repository) PostAdminShowReservation(w http.ResponseWriter, r *http.Request) {
 	pageSrc := chi.URLParam(r, "src")
 	reservationId, err := strconv.Atoi(chi.URLParam(r, "reservation_id"))
@@ -670,7 +672,74 @@ func (rep *Repository) AdminDeleteReservation(w http.ResponseWriter, r *http.Req
 	http.Redirect(w, r, "/admin/reservations-"+pageSrc, http.StatusSeeOther)
 }
 
+// Shows reservation calendar
 func (rep *Repository) AdminReservationsCalendar(w http.ResponseWriter, r *http.Request) {
+	// if month and year are not specified
+	now := time.Now()
 
-	render.RenderTemplate(w, r, "admin-reservations-calendar.page.gohtml", &models.TemplateData{})
+	// if month and year are specified
+	if r.URL.Query().Get("y") != "" {
+		year, err := strconv.Atoi(r.URL.Query().Get("y"))
+		if err != nil {
+			helpers.ServerError(w, err)
+			return
+		}
+
+		month, err := strconv.Atoi(r.URL.Query().Get("m"))
+		if err != nil {
+			helpers.ServerError(w, err)
+			return
+		}
+		now = time.Date(year, time.Month(month), 1, 0, 0, 0, 0, time.UTC)
+	}
+
+	next := now.AddDate(0, 1, 0)
+	previous := now.AddDate(0, -1, 0)
+
+	nextMonth := next.Format("01")
+	nextMonthYear := next.Format("2006")
+
+	previousMonth := previous.Format("01")
+	previousMonthYear := previous.Format("2006")
+
+	thisMonth := now.Format("01")
+	thisMonthYear := now.Format("2006")
+
+	// putting all these details in a stringmap, so as to be passed down to the template
+	stringMap := make(map[string]string)
+	stringMap["nextMonth"] = nextMonth
+	stringMap["nextMonthYear"] = nextMonthYear
+	stringMap["previousMonth"] = previousMonth
+	stringMap["previousMonthYear"] = previousMonthYear
+	stringMap["thisMonth"] = thisMonth
+	stringMap["thisMonthYear"] = thisMonthYear
+
+	// Get the number of days in this month
+	currentYear, currentMonth, _ := now.Date()
+	currentLocation := now.Location()
+	firstOfMonth := time.Date(currentYear, currentMonth, 1, 0, 0, 0, 0, currentLocation)
+	lastOfMonth := firstOfMonth.AddDate(0, 1, -1)
+	days := lastOfMonth.Day()
+
+	intMap := make(map[string]int)
+	intMap["daysInMonth"] = days
+
+	// Data map
+	data := make(map[string]interface{})
+	data["now"] = now
+
+	// Get rooms info and pass into the data map
+	rooms, err := rep.DB.AllRooms()
+	if err != nil {
+		helpers.ServerError(w, err)
+		return
+	}
+
+	data["rooms"] = rooms
+
+	render.RenderTemplate(w, r, "admin-reservations-calendar.page.gohtml", &models.TemplateData{
+		StringMap: stringMap,
+		Data:      data,
+		IntMap:    intMap,
+	})
 }
