@@ -737,6 +737,49 @@ func (rep *Repository) AdminReservationsCalendar(w http.ResponseWriter, r *http.
 
 	data["rooms"] = rooms
 
+	// Get the Block and Reservation Date for this month
+	for _, room := range rooms {
+		// Create maps to store blocks and reservations
+		reservationMap := make(map[string]int)
+		blockMap := make(map[string]int)
+
+		// Populate the maps with 0's denoting an empty res or block
+		for d := firstOfMonth; !d.After(lastOfMonth); d = d.AddDate(0, 0, 1) {
+			reservationMap[d.Format("2006-01-02")] = 0
+			intMap[d.Format("2006-01-02")] = 0
+		}
+
+		// Get the room_restrictions data
+		restrictions, err := rep.DB.GetRestrictionsForRoomsByDate(room.ID, firstOfMonth, lastOfMonth)
+		if err != nil {
+			helpers.ServerError(w, err)
+			return
+		}
+
+		for _, r := range restrictions {
+			// Check for a block or reservation
+
+			if r.ReservationID > 0 {
+				// Reservation
+				// Change 0 to reservationId for all the dates that has a reservation
+				for d := r.StartDate; !d.After(r.EndDate); d = d.AddDate(0, 0, 1) {
+					reservationMap[d.Format("2006-01-02")] = r.ReservationID
+				}
+			} else {
+				// Block
+				for d := r.StartDate; !d.After(r.EndDate); d = d.AddDate(0, 0, 1) {
+					blockMap[d.Format("2006-01-02")] = r.ID
+				}
+			}
+		}
+
+		data[fmt.Sprintf("reservationMap_%d", room.ID)] = reservationMap
+		data[fmt.Sprintf("blockMap_%d", room.ID)] = blockMap
+
+		// Put the block map in the session - will help to check the changes after the user blocks days in the calendar
+		rep.app.Session.Put(r.Context(), fmt.Sprintf("blockMap_%d", room.ID), blockMap)
+	}
+
 	render.RenderTemplate(w, r, "admin-reservations-calendar.page.gohtml", &models.TemplateData{
 		StringMap: stringMap,
 		Data:      data,

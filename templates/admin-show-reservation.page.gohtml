@@ -65,8 +65,14 @@
           <div class="row justify-content-between">
             <div class="col-lg-6">
               <button type="submit" class="btn btn-primary">Submit</button>
-              <a href="/admin/reservations-{{.StringMap.src}}" class="btn btn-warning">Cancel</a>
-              
+
+              {{if eq .StringMap.src "cal"}}
+                <!-- Take user one step back -->
+                <a href="#!" onClick="window.history.go(-1)" class="btn btn-warning">Cancel</a>
+              {{else}}
+                <!-- Take user to alls or new page -->
+                <a href="/admin/reservations-{{.StringMap.src}}" class="btn btn-warning">Cancel</a>
+              {{end}}
               {{if eq $reservation.Processed 0}}
                 <button type="button" class="btn btn-info" id="processBtn" onclick="processRes()">Mark As Processed</button>
               {{end}}
