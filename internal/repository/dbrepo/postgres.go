@@ -602,3 +602,43 @@ func (p *postgresDBRepo) GetRestrictionsForRoomsByDate(roomId int, startDate, en
 
 	return restrictions, nil
 }
+
+// Deletes a room_restriction by the room_restriction id
+func (p *postgresDBRepo) DeleteRoomRestrictionById(id int) error {
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+
+	defer cancel()
+
+	stmt := `
+		delete from room_restrictions 
+		where 	
+			id = $1
+	`
+
+	_, err := p.DB.ExecContext(ctx, stmt, id)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// Inserts a block restriction for room by id on the given date
+func (p *postgresDBRepo) InsertBlockForRoom(roomId int, startDate time.Time) error {
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+
+	defer cancel()
+
+	stmt := `
+		insert into room_restrictions (start_date, end_date, room_id, restriction_id, created_at, updated_at) 
+		values
+		($1, $1, $2, $3, $4, $5)
+	`
+
+	_, err := p.DB.ExecContext(ctx, stmt, startDate, roomId, 2, time.Now(), time.Now())
+	if err != nil {
+		return err
+	}
+
+	return nil
+}

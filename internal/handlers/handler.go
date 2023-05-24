@@ -826,14 +826,18 @@ func (rep *Repository) PostAdminReservationsCalendar(w http.ResponseWriter, r *h
 		// In that case, we will have to check, for those values ? 0, are they present in the form data?
 		// If not, then the user has unchecked that very checkbox, thus the block needs to be removed(block restriction should be deleted)
 
-		for name, value := range curBlockMap {
+		for name, _ := range curBlockMap {
 
 			if val, ok := curBlockMap[name]; ok {
 				// pay attention to val > 0, if they are not in the form data, then delete that block restriction
 				if val > 0 {
 					if !form.Has(fmt.Sprintf("remove_block_%d_%s", room.ID, name)) {
-						// Delete the block restriction
-						log.Println("will delete the restriction:", value)
+						// Delete the block restriction by id
+						err := rep.DB.DeleteRoomRestrictionById(val)
+						if err != nil {
+							helpers.ServerError(w, err)
+							return
+						}
 					}
 				}
 			}
@@ -853,8 +857,17 @@ func (rep *Repository) PostAdminReservationsCalendar(w http.ResponseWriter, r *h
 				return
 			}
 			date := exploded[3]
+			startDate, err := time.Parse("2006-01-02", date)
+			if err != nil {
+				helpers.ServerError(w, err)
+				return
+			}
 
-			log.Println("add block for room", roomId, "for date", date)
+			err = rep.DB.InsertBlockForRoom(roomId, startDate)
+			if err != nil {
+				helpers.ServerError(w, err)
+				return
+			}
 		}
 	}
 
