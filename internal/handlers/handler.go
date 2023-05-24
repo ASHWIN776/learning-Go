@@ -7,6 +7,7 @@ import (
 	"log"
 	"net/http"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/ASHWIN776/learning-Go/internal/config"
@@ -785,4 +786,81 @@ func (rep *Repository) AdminReservationsCalendar(w http.ResponseWriter, r *http.
 		Data:      data,
 		IntMap:    intMap,
 	})
+}
+
+// Handles the post of reservation calendar
+func (rep *Repository) PostAdminReservationsCalendar(w http.ResponseWriter, r *http.Request) {
+	err := r.ParseForm()
+	if err != nil {
+		helpers.ServerError(w, err)
+		return
+	}
+
+	// Get the m and y values for a successful redirect
+	year, err := strconv.Atoi(r.Form.Get("y"))
+	if err != nil {
+		helpers.ServerError(w, err)
+		return
+	}
+	month, err := strconv.Atoi(r.Form.Get("m"))
+	if err != nil {
+		helpers.ServerError(w, err)
+		return
+	}
+
+	// Process blocks
+	// Handle remove blocks
+	rooms, err := rep.DB.AllRooms()
+	if err != nil {
+		helpers.ServerError(w, err)
+		return
+	}
+
+	form := forms.New(r.PostForm)
+
+	for _, room := range rooms {
+		curBlockMap := rep.app.Session.Get(r.Context(), fmt.Sprintf("blockMap_%d", room.ID)).(map[string]int)
+
+		// Loop throught the block map and
+		// If any entry in the block map has value > 0, they are of utmost importance because they can be potentially removed by the user before posting the form
+		// In that case, we will have to check, for those values ? 0, are they present in the form data?
+		// If not, then the user has unchecked that very checkbox, thus the block needs to be removed(block restriction should be deleted)
+
+		for name, value := range curBlockMap {
+
+			if val, ok := curBlockMap[name]; ok {
+				// pay attention to val > 0, if they are not in the form data, then delete that block restriction
+				if val > 0 {
+					if !form.Has(fmt.Sprintf("remove_block_%d_%s", room.ID, name)) {
+						// Delete the block restriction
+						log.Println("will delete the restriction:", value)
+					}
+				}
+			}
+
+		}
+	}
+
+	// Handle the add blocks
+	// Loop through form data and find out the ones that have the names starting from add_block, and add them to the room_restrictions table
+	for name, _ := range r.PostForm {
+		// if the name starts with "add_block"
+		if strings.HasPrefix(name, "add_block") {
+			exploded := strings.Split(name, "_")
+			roomId, err := strconv.Atoi(exploded[2])
+			if err != nil {
+				helpers.ServerError(w, err)
+				return
+			}
+			date := exploded[3]
+
+			log.Println("add block for room", roomId, "for date", date)
+		}
+	}
+
+	// Flash message in the session
+	rep.app.Session.Put(r.Context(), "flash", "Changes Saved")
+
+	// Redirect back to the required page
+	http.Redirect(w, r, fmt.Sprintf("/admin/reservations-calendar?y=%d&m=%d", year, month), http.StatusSeeOther)
 }
