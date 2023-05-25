@@ -552,6 +552,10 @@ func (rep *Repository) AdminAllReservations(w http.ResponseWriter, r *http.Reque
 
 // Shows more of one reservation
 func (rep *Repository) AdminShowReservation(w http.ResponseWriter, r *http.Request) {
+	// Get the month and year params if coming from calendar
+	year := r.URL.Query().Get("y")
+	month := r.URL.Query().Get("m")
+
 	pageSrc := chi.URLParam(r, "src")
 	reservationId, err := strconv.Atoi(chi.URLParam(r, "reservation_id"))
 	if err != nil {
@@ -569,6 +573,10 @@ func (rep *Repository) AdminShowReservation(w http.ResponseWriter, r *http.Reque
 
 	stringMap := make(map[string]string)
 	stringMap["src"] = pageSrc
+
+	// Pass year and month for redirects to calendar page
+	stringMap["year"] = year
+	stringMap["month"] = month
 
 	render.RenderTemplate(w, r, "admin-show-reservation.page.gohtml", &models.TemplateData{
 		Data:      data,
@@ -624,7 +632,17 @@ func (rep *Repository) PostAdminShowReservation(w http.ResponseWriter, r *http.R
 	}
 
 	rep.app.Session.Put(r.Context(), "flash", fmt.Sprintf("Reservation ID: %d Updated Successfully", oldReservation.ID))
-	http.Redirect(w, r, "/admin/reservations-"+pageSrc, http.StatusSeeOther)
+
+	// Get month and year values in order to go back to calendar
+	year := r.Form.Get("year")
+	month := r.Form.Get("month")
+
+	// Redirect the user back to the src page
+	if year == "" {
+		http.Redirect(w, r, "/admin/reservations-"+pageSrc, http.StatusSeeOther)
+	} else {
+		http.Redirect(w, r, fmt.Sprintf("/admin/reservations-calendar?y=%s&m=%s", year, month), http.StatusSeeOther)
+	}
 }
 
 // Processes the given reservation
@@ -646,8 +664,16 @@ func (rep *Repository) AdminProcessReservation(w http.ResponseWriter, r *http.Re
 	// add the flash message in the session too
 	rep.app.Session.Put(r.Context(), "flash", fmt.Sprintf("Processed Reservation ID %d successfully", reservationId))
 
+	// Pass year and month for redirects to calendar page
+	year := r.URL.Query().Get("y")
+	month := r.URL.Query().Get("m")
+
 	// Redirect the user back to the src page
-	http.Redirect(w, r, "/admin/reservations-"+pageSrc, http.StatusSeeOther)
+	if year == "" {
+		http.Redirect(w, r, "/admin/reservations-"+pageSrc, http.StatusSeeOther)
+	} else {
+		http.Redirect(w, r, fmt.Sprintf("/admin/reservations-calendar?y=%s&m=%s", year, month), http.StatusSeeOther)
+	}
 }
 
 // Delete the reservation
@@ -669,8 +695,15 @@ func (rep *Repository) AdminDeleteReservation(w http.ResponseWriter, r *http.Req
 	// add the flash message in the session too
 	rep.app.Session.Put(r.Context(), "flash", fmt.Sprintf("Deleted Reservation ID %d successfully", reservationId))
 
+	year := r.URL.Query().Get("y")
+	month := r.URL.Query().Get("m")
+
 	// Redirect the user back to the src page
-	http.Redirect(w, r, "/admin/reservations-"+pageSrc, http.StatusSeeOther)
+	if year == "" {
+		http.Redirect(w, r, "/admin/reservations-"+pageSrc, http.StatusSeeOther)
+	} else {
+		http.Redirect(w, r, fmt.Sprintf("/admin/reservations-calendar?y=%s&m=%s", year, month), http.StatusSeeOther)
+	}
 }
 
 // Shows reservation calendar

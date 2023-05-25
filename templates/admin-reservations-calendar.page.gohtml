@@ -54,7 +54,7 @@
                                 <td class="text-center">
                                     
                                     {{if gt $reservationId 0}}
-                                        <a href="/admin/reservations/cal/{{$reservationId}}" class="text-danger">R</a>
+                                        <a href="/admin/reservations/cal/{{$reservationId}}?y={{$curYear}}&m={{$curMonth}}" class="text-danger">R</a>
                                     {{else}}
                                         <input 
                                         type="checkbox" 
